@@ -192,7 +192,7 @@ def _update_ligand_neighbourhood_transforms(
             log = True
 
         # See if atoms match - transform is frame 2 to frame 1
-        ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood, log)
+        ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood, log=log)
 
         if conditon:
             time.sleep(5)
