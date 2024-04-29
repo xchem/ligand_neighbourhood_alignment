@@ -1,3 +1,5 @@
+import time
+
 import gemmi
 import numpy as np
 from loguru import logger
@@ -193,6 +195,7 @@ def _update_ligand_neighbourhood_transforms(
         ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood, log)
 
         if conditon:
+            time.sleep(5)
             exit()
 
         if ca_match:
