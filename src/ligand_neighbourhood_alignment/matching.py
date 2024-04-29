@@ -65,6 +65,9 @@ def match_atoms(
             ):
                 num_alignable_atoms += 1
 
+    if log:
+        print(f'Got {num_alignable_atoms} alignable atoms!')
+
     if num_alignable_atoms > min_alignable_atoms:
         return True
     else:
