@@ -177,8 +177,17 @@ def _update_ligand_neighbourhood_transforms(
         ligand_2_id,
         ligand_2_neighbourhood,
     ) in ligand_neighbourhoods.items():
+        log = False
+        if (ligand_1_id[0] == "A71EV2A-x0202") & (ligand_1_id[2] == "201") & (ligand_2_id[0] == "A71EV2A-x0202") & (ligand_2_id[2] == "201"):
+            print('##########################')
+            print(ligand_1_id)
+            print(ligand_2_id)
+            log = True
+
         # See if atoms match - transform is frame 2 to frame 1
-        ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood)
+        ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood, log)
+
+        exit()
 
         if ca_match:
             # connectivities.append(1)

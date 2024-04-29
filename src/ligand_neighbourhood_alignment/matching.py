@@ -50,6 +50,7 @@ def match_atoms(
     site_1_atoms: dict[AtomID, Atom],
     site_2_atoms: dict[AtomID, Atom],
     min_alignable_atoms: int = 5,
+        log=False
 ) -> bool:
     # Check if there is an alignable number of atoms shared between the
     num_alignable_atoms: int = 0
