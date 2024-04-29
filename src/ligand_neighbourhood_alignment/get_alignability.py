@@ -110,6 +110,7 @@ def _match_cas(
     ligand_2_neighbourhood: dt.Neighbourhood,
     min_alignable_atoms: int = 9,  # 10 splits A71, but some things almost identical end up in different clusters
     max_alignable_rmsd: float = 2.0,
+        log=False
 ):
 
     alignable_cas = []
@@ -131,6 +132,9 @@ def _match_cas(
                             ),
                         )
                     )
+
+    if log:
+        print(f'Got {len(alignable_cas)} alignable atoms! Min is {min_alignable_atoms}')
 
     if len(alignable_cas) >= min(
         [min_alignable_atoms, len(ligand_1_neighbourhood.atoms), len(ligand_2_neighbourhood.atoms)]
