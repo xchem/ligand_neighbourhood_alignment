@@ -196,6 +196,7 @@ def _update_ligand_neighbourhood_transforms(
 
         if conditon:
             time.sleep(5)
+            print('############')
             exit()
 
         if ca_match:
