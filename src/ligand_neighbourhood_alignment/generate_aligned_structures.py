@@ -338,7 +338,7 @@ def _drop_non_binding_chains_and_symmetrize_waters(
                 ]
 
                 # If so increase the multiplicity by one and add the atom with the new multiplicity
-                if not all([np.allclose(pos1, pos2, atol=0.1) for pos2 in poss]):
+                if not any([np.allclose(pos1, pos2, atol=0.1) for pos2 in poss]):
                     atom_multiplicities[base_atom_id] += 1
                     atom_id = base_atom_id + (atom_multiplicities[base_atom_id],)
 
