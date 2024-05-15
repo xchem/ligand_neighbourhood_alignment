@@ -5,7 +5,7 @@ assemblies:
         chains: A, A(-x,y,-z)
     monomer:
         reference: 7ql8-pdb-bundle1
-        biomol: A
+        biomol: B
         chains: A
 crystalforms:
     xtalform1:
