@@ -16,13 +16,13 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
     # 4. Check per-chain RMSDs and warn if any are high
 
     # 1. Determine the Assembly priority
-    assembly_priority = {_j: _assembly_name for _j, _assembly_name in enumerate(assemblies)}
+    assembly_priority = {_assembly_name: _j for _j, _assembly_name in enumerate(assemblies)}
 
     # 2. Determine the Chain priority and map assembly names to chains
     chain_priority = {}
     assembly_chains = {}
     chain_priority_count = 0
-    for _j, _assembly_name in assembly_priority.items():
+    for _assembly_name, _j in assembly_priority.items():
         assembly = assemblies[_assembly_name]
         assembly_chains[_assembly_name] = []
         for _generator in assembly.generators:
@@ -34,13 +34,12 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
 
     if debug:
         rprint(chain_priority)
-
+        rprint(assembly_priority)
 
     # 3. Find each assembly's reference
     reference_assemblies = {}
     for _assembly_name, _assembly in assemblies.items():
         # Get the highest priority chain
-        rprint([_generator.chain for _generator in _assembly.generators])
         reference_chain = min(
             [_generator.chain for _generator in _assembly.generators], key=lambda _x: chain_priority[_x]
         )
