@@ -43,7 +43,7 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
     for _assembly_name, _assembly in assemblies.items():
         # Get the highest priority chain
         reference_chain = min(
-            [_generator.chain for _generator in _assembly.generators], key=lambda _x: chain_priority[_x]
+            [_generator.biomol for _generator in _assembly.generators], key=lambda _x: chain_priority[_x]
         )
 
         # Get the highest priority assembly in which it occurs
