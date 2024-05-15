@@ -64,3 +64,13 @@ def assemblies(constants, assemblies_file):
         _assemblies[assembly_id] = dt.Assembly.from_dict(assembly_info)
 
     return _assemblies
+
+def xtalforms(constants, assemblies_file):
+    _xtalforms = {}
+    with open(assemblies_file, "r") as f:
+        dic = yaml.safe_load(f)["crystalforms"]
+
+    for xtalform_id, xtalform_info in dic.items():
+        _xtalforms[xtalform_id] = dt.XtalForm.from_dict(xtalform_info)
+
+    return _xtalforms
