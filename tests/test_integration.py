@@ -12,7 +12,7 @@ def test_derive_alignment_heirarchy(
     assemblies
 ):
     # Run _derive_alignment_heirarchy
-    reference_assemblies = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+    reference_assemblies = alignment_heirarchy._derive_alignment_heirarchy(assemblies, debug=True)
 
     # Print important info
     rprint(reference_assemblies)

@@ -1,9 +1,11 @@
+from rich import print as rprint
+
 from ligand_neighbourhood_alignment import dt
 
 AlignmentHeirarchy = dict[str, tuple[str, str]]
 
 
-def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly]) -> AlignmentHeirarchy:
+def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False) -> AlignmentHeirarchy:
     # The Alignment hierarchy is the graph of alignments one must perform in order to get from
     # a ligand canonical site to the Reference Assembly Frame
 
@@ -27,8 +29,12 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly]) -> Alignment
             _biological_chain_name = _generator.biomol
             assembly_chains[_assembly_name].append(_biological_chain_name)
             if _biological_chain_name not in chain_priority.values():
-                chain_priority[chain_priority_count] = _biological_chain_name
+                chain_priority[_biological_chain_name] = chain_priority_count
                 chain_priority_count += 1
+
+    if debug:
+        rprint(chain_priority)
+
 
     # 3. Find each assembly's reference
     reference_assemblies = {}
