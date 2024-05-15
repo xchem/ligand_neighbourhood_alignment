@@ -24,12 +24,13 @@ def test_chain_to_biochain(
         xtalforms
 ):
     rprint(xtalforms)
-    for assembly_name, assembly in assemblies.items():
-        for generator in assembly.generators:
-            biochain = alignment_heirarchy._chain_to_biochain(generator.chain, xtalforms['xtalform1'], assemblies)
-            rprint(
-                f'Chain to Biochain: {assembly_name} : {generator.chain} : dimer -> {biochain}'
-            )
+    for xtalform_name, xtalform in xtalforms.items():
+        for assembly_name, assembly in xtalform.assemblies.items():
+            for generator in assembly.generators:
+                biochain = alignment_heirarchy._chain_to_biochain(generator.chain, xtalform, assemblies)
+                rprint(
+                    f'Chain to Biochain: {assembly_name} : {generator.chain} : dimer -> {biochain}'
+                )
 
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):

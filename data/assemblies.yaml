@@ -14,3 +14,9 @@ crystalforms:
             1:
                 assembly: dimer
                 chains: A,A(-x,y,-z)
+    xtalform2:
+        reference: 7ql8-pdb-bundle1
+        assemblies:
+            1:
+                assembly: monomer
+                chains: A
