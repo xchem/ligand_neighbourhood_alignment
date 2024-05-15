@@ -54,10 +54,11 @@ def pdb_paths(constants):
 
 @pytest.fixture(scope="session")
 def assemblies(constants, assemblies_file):
+    _assemblies = {}
     with open(assemblies_file, "r") as f:
         dic = yaml.safe_load(f)
 
     for assembly_id, assembly_info in dic["assemblies"].items():
-        assemblies[assembly_id] = dt.Assembly.from_dict(assembly_info)
+        _assemblies[assembly_id] = dt.Assembly.from_dict(assembly_info)
 
-    return assemblies
+    return _assemblies
