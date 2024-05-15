@@ -33,8 +33,8 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
                 chain_priority_count += 1
 
     if debug:
-        rprint(chain_priority)
         rprint(assembly_priority)
+        rprint(chain_priority)
 
     # 3. Find each assembly's reference
     reference_assemblies = {}
