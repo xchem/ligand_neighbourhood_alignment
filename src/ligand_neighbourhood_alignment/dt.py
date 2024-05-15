@@ -12,10 +12,10 @@ logger.remove()  # for someone not familiar with the lib, whats going on here?
 logger.add(sys.stdout, level="INFO")
 
 from ligand_neighbourhood_alignment import constants
-from ligand_neighbourhood_alignment.make_data_json import (
-    _get_ligand_binding_events_from_panddas,
-    _get_ligand_binding_events_from_structure,
-)
+# from ligand_neighbourhood_alignment.make_data_json import (
+#     _get_ligand_binding_events_from_panddas,
+#     _get_ligand_binding_events_from_structure,
+# )
 
 
 class LigandNeighbourhoodOutput:
