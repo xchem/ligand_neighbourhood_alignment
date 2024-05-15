@@ -26,7 +26,7 @@ def test_chain_to_biochain(
     rprint(xtalforms)
     for assembly_name, assembly in assemblies.items():
         for generator in assembly.generators:
-            biochain = alignment_heirarchy._chain_to_biochain(generator.chain, xtalforms['dimer'], assemblies)
+            biochain = alignment_heirarchy._chain_to_biochain(generator.chain, xtalforms['xtalform1'], assemblies)
             rprint(
                 f'Chain to Biochain: {generator.chain} : dimer -> {biochain}'
             )
