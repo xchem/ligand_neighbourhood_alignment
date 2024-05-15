@@ -28,7 +28,7 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
         for _generator in assembly.generators:
             _biological_chain_name = _generator.biomol
             assembly_chains[_assembly_name].append(_biological_chain_name)
-            if _biological_chain_name not in chain_priority.values():
+            if _biological_chain_name not in chain_priority:
                 chain_priority[_biological_chain_name] = chain_priority_count
                 chain_priority_count += 1
 
