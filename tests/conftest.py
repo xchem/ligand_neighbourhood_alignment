@@ -7,6 +7,7 @@ import pytest
 
 from ligand_neighbourhood_alignment import dt
 
+
 @pytest.fixture(scope="session")
 def constants():
     class Constants:
@@ -51,6 +52,7 @@ def assemblies_file(
 def pdb_paths(constants):
     pdb_paths = [Path(path) for path in constants.DATA_PATHS]
     return pdb_paths
+
 
 @pytest.fixture(scope="session")
 def assemblies(constants, assemblies_file):
