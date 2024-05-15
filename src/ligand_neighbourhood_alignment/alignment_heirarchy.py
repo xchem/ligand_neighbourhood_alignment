@@ -1,6 +1,6 @@
 from ligand_neighbourhood_alignment import dt
 
-AlignmentHeirarchy: dict[str, tuple[str, str]]
+AlignmentHeirarchy = dict[str, tuple[str, str]]
 
 
 def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly]) -> AlignmentHeirarchy:
@@ -62,7 +62,7 @@ def _chain_to_biochain(chain_name, xtalform: dt.XtalForm, assemblies: dict[str, 
                 return assemblies[_xtal_assembly.assembly].generators[_j].biomol
 
 
-StructureLandmarks: dict[tuple[str, str, str], tuple[float, float, float]]
+StructureLandmarks = dict[tuple[str, str, str], tuple[float, float, float]]
 
 
 def _calculate_assembly_transform(
