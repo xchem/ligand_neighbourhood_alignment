@@ -33,7 +33,9 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
                 chain_priority_count += 1
 
     if debug:
+        rprint(f'Assembly priority')
         rprint(assembly_priority)
+        rprint(f'Chain priority')
         rprint(chain_priority)
 
     # 3. Find each assembly's reference
@@ -54,6 +56,10 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
             key=lambda _x: assembly_priority[_x],
         )
         reference_assemblies[_assembly_name] = (reference_assembly, reference_chain)
+
+    if debug:
+        rprint(f'Reference Assemblies')
+        rprint(reference_assemblies)
 
     # 4. Check per-chain RMSDs and warn if any are high
     # TODO
