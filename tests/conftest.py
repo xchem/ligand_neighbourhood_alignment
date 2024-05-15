@@ -65,6 +65,8 @@ def assemblies(constants, assemblies_file):
 
     return _assemblies
 
+
+@pytest.fixture(scope="session")
 def xtalforms(constants, assemblies_file):
     _xtalforms = {}
     with open(assemblies_file, "r") as f:
