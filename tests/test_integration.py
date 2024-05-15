@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 import yaml
 from rich import print as rprint
+import gemmi
 
 from ligand_neighbourhood_alignment import alignment_heirarchy
 
@@ -31,6 +32,21 @@ def test_chain_to_biochain(
                 rprint(
                     f'Chain to Biochain: {xtalform_name} : {xtalform_assembly_name} : {chain} -> {biochain}'
                 )
+
+def test_structure_to_landmarks(
+        pdb_paths
+):
+    st = gemmi.read_structure(str(pdb_paths[0]))
+    landmarks = alignment_heirarchy.structure_to_landmarks(st)
+    rprint(landmarks)
+    ...
+
+def test_calculate_assembly_transform(
+    assembly_name,
+    alignment_heirarchy,
+    assembly_landmarks
+):
+    ...
 
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):

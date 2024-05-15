@@ -1,6 +1,6 @@
 from rich import print as rprint
 
-from ligand_neighbourhood_alignment import dt
+from ligand_neighbourhood_alignment import dt, constants
 
 AlignmentHeirarchy = dict[str, tuple[str, str]]
 
@@ -76,6 +76,18 @@ def _chain_to_biochain(chain_name, xtalform: dt.XtalForm, assemblies: dict[str, 
 
 StructureLandmarks = dict[tuple[str, str, str], tuple[float, float, float]]
 
+def structure_to_landmarks(st):
+    landmarks = {}
+    for model in st:
+        for chain in model:
+            for residue in chain:
+                if residue.name not in constants.RESIDUE_NAMES:
+                    continue
+                for atom in residue:
+                    pos = atom.pos
+                    landmarks[(chain.name, residue.name, atom.name)] = (pos.x, pos.y, pos.z)
+
+    return landmarks
 
 def _calculate_assembly_transform(
     assembly_name: str, alignment_heirarchy: AlignmentHeirarchy, assembly_landmarks: dict[str, StructureLandmarks]

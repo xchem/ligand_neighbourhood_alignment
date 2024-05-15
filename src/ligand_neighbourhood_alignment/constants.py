@@ -57,3 +57,25 @@ REFERENCE_STRUCTURE_TRANSFORMS_YAML = "reference_structure_transforms.yaml"
 ALIGNED_REFERENCE_STRUCTURE_TEMPLATE = "{dtag}_{site}_ref.pdb"
 ALIGNED_REFERENCE_STRUCTURE_ARTEFACTS_TEMPLATE = "{dtag}_{site}_artefacts_ref.pdb"
 ALIGNED_REFERENCE_XMAP_TEMPLATE = "{dtag}_{site}_ref.ccp4"
+
+RESIDUE_NAMES = ["ALA",
+                 "ARG",
+                 "ASN",
+                 "ASP",
+                 "CYS",
+                 "GLN",
+                 "GLU",
+                 "HIS",
+                 "ILE",
+                 "LEU",
+                 "LYS",
+                 "MET",
+                 "PHE",
+                 "PRO",
+                 "SER",
+                 "THR",
+                 "TRP",
+                 "TYR",
+                 "VAL",
+                 "GLY",
+                 ]
