@@ -141,7 +141,7 @@ def _landmark_to_structure(lm):
         new_atom.name = atom
         pos = gemmi.Position(x, y, z)
         new_atom.pos = pos
-        st[0][chain][seqid][0].add_atom(atom)
+        st[0][chain][seqid][0].add_atom(new_atom)
 
     return st
 
