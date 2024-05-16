@@ -157,9 +157,9 @@ def _calculate_assembly_transform(
 ):
     # Convert to gemmi structures to use superposition algorithm there
     ref_st = _landmark_to_structure(ref)
-    rprint(ref_st.make_pdb_string())
+    rprint(ref_st)
     mov_st = _landmark_to_structure(mov)
-    rprint(mov_st.make_pdb_string())
+    rprint(mov_st)
 
     # Get transform using gemmi superposition
     ref_pol = ref_st[0][chain].get_polymer()
