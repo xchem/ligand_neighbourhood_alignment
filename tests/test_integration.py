@@ -65,7 +65,8 @@ def test_calculate_assembly_transform(
     transform = alignment_heirarchy._calculate_assembly_transform(
         ref=as1_lm,
         mov=as2_lm,
-        chain=hierarchy['monomer'][1]
+        chain=hierarchy['monomer'][1],
+        debug=True
     )
     rprint(transform)
 
