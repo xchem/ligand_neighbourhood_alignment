@@ -192,7 +192,7 @@ def _calculate_assembly_transform_sequence(
         next_assembly, alignment_chain = hierarchy[running_assembly]
         running_assembly = next_assembly
         if len(assembly_sequence) != 0:
-            if next_assembly == assembly_sequence[-1][0]:
+            if running_assembly == next_assembly:
                 break
         else:
             assembly_sequence.append((next_assembly, alignment_chain))
