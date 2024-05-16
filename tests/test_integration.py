@@ -97,7 +97,8 @@ def test_calculate_assembly_transform_sequence(
     alignment_heirarchy._calculate_assembly_transform_sequence(
         hierarchy,
         'fake_tetramer',
-        landmarks
+        landmarks,
+        debug=True
     )
 
 # @pytest.mark.order(after="test_collator_upload_1")
