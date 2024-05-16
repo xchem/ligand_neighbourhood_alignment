@@ -70,8 +70,14 @@ def test_calculate_assembly_transform(
     )
     rprint(transform)
 
-def test_compose_assembly_transforms():
-    ...
+def test_calculate_assembly_transform_sequence(assemblies):
+
+    # Generate alignment hierarchy
+    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+
+    #
+    transform_sequence = alignment_heirarchy._calculate_assembly_transform_sequence(hierarchy, 'fake_tetramer')
+    rprint(transform_sequence)
 
 
 # @pytest.mark.order(after="test_collator_upload_1")

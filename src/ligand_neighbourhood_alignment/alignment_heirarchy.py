@@ -180,3 +180,18 @@ def _calculate_assembly_transform(
         'rmsd': sup.rmsd,
         "count": sup.count
     }
+
+def _calculate_assembly_transform_sequence(
+        hierarchy,
+        mov_assembly,
+):
+    # Get the assembly sequence
+    assembly_sequence = []
+    while True:
+        next_assembly, alignment_chain = hierarchy[mov_assembly]
+        if next_assembly == assembly_sequence[-1][0]:
+            break
+        else:
+            assembly_sequence.append((next_assembly, alignment_chain))
+
+    return assembly_sequence
