@@ -10,6 +10,7 @@ assemblies:
     fake_dimer:
         reference: 8e1y
         biomol: A,C
+        chains: A,B
     fake_tetramer:
         reference: 8dz9
         biomol: D,C,E,F
