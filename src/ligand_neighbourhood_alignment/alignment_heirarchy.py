@@ -166,7 +166,7 @@ def _calculate_assembly_transform(
     #     rprint(structure_to_landmarks(mov_st))
 
     # Get transform using gemmi superposition
-    ref_pol = ref_st[0]['A'].get_polymer()
+    ref_pol = ref_st[0]['B'].get_polymer()
     if debug:
         rprint(len(ref_pol))
         rprint(ref_pol)
