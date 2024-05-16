@@ -87,7 +87,7 @@ def structure_to_landmarks(st):
                     continue
                 for atom in residue:
                     pos = atom.pos
-                    landmarks[(chain.name, residue.name, atom.name)] = (pos.x, pos.y, pos.z)
+                    landmarks[(chain.name, (residue.name, str(residue.seqid.num)), atom.name)] = (pos.x, pos.y, pos.z)
 
     return landmarks
 
@@ -125,16 +125,17 @@ def _landmark_to_structure(lm):
     st.add_model(model)
     used_chains = []
     used_ress = []
-    for (chain, res, atom), (x, y, z) in lm.items():
+    for (chain, (res_name, seqid), atom), (x, y, z) in lm.items():
         if chain not in used_chains:
             st[0].add_chain(gemmi.Chain(chain))
             used_chains.append(chain)
 
-        if (chain, res) not in used_ress:
+        if (chain, seqid) not in used_ress:
             new_residue = gemmi.Residue()
-            new_residue.name = res
+            new_residue.name = res_name
+            new_residue.seqid = gemmi.SeqId(str(seqid))
             st[0][chain].add_residue(new_residue)
-            used_ress.append((chain, res))
+            used_ress.append((chain, seqid))
 
         new_atom = gemmi.Atom()
         new_atom.name = atom
