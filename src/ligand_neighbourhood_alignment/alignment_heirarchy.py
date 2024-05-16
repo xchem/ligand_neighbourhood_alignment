@@ -119,6 +119,7 @@ def _get_assembly_st(as1, as1_ref):
     new_st.add_model(new_model)
     return new_st
 
+
 def _landmark_to_structure(lm):
     st = gemmi.Structure()
     model = gemmi.Model("0")
@@ -145,15 +146,14 @@ def _landmark_to_structure(lm):
 
     return st
 
-
     ...
+
 
 def _calculate_assembly_transform(
         ref=None,
         mov=None,
         chain=None,
 ):
-
     # Convert to gemmi structures to use superposition algorithm there
     ref_st = _landmark_to_structure(ref)
     mov_st = _landmark_to_structure(mov)
@@ -166,7 +166,6 @@ def _calculate_assembly_transform(
     transform = sup.transform
 
     # transform to interchangable format
-
 
     return {
         'vec': transform.vec.tolist(),
