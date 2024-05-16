@@ -175,17 +175,17 @@ def _calculate_assembly_transform(
     #     rprint(structure_to_landmarks(mov_st))
 
     # Get transform using gemmi superposition
-    ref_pol = ref_st[0][chain].get_polymer()
-    if debug:
-        rprint(len(ref_pol))
-        rprint(ref_pol)
-    mov_pol = mov_st[0][chain].get_polymer()
-    if debug:
-        rprint(len(mov_pol))
-        rprint(mov_pol)
-    ptype = ref_pol.check_polymer_type()
-    if debug:
-        rprint(f'Ptype: {ptype}')
+    # ref_pol = ref_st[0][chain].get_polymer()
+    # if debug:
+    #     rprint(len(ref_pol))
+    #     rprint(ref_pol)
+    # mov_pol = mov_st[0][chain].get_polymer()
+    # if debug:
+    #     rprint(len(mov_pol))
+    #     rprint(mov_pol)
+    # ptype = ref_pol.check_polymer_type()
+    # if debug:
+    #     rprint(f'Ptype: {ptype}')
 
 
     sup = gemmi.superpose_positions(
