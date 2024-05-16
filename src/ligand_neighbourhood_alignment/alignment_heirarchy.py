@@ -131,7 +131,9 @@ def _landmark_to_structure(lm):
             used_chains.append(chain)
 
         if (chain, res) not in used_ress:
-            st[0][chain].add_residue(gemmi.Residue(res))
+            new_residue = gemmi.Residue(res)
+            new_residue.name = res
+            st[0][chain].add_residue(new_residue)
             used_ress.append((chain, res))
 
         new_atom = gemmi.Atom()
