@@ -175,6 +175,8 @@ def _calculate_assembly_transform(
         rprint(len(mov_pol))
         rprint(mov_pol)
     ptype = ref_pol.check_polymer_type()
+    if debug:
+        rprint(f'Ptype: {ptype}")
     sup = gemmi.calculate_superposition(ref_pol, mov_pol, ptype, gemmi.SupSelect.CaP)
     transform = sup.transform
 
