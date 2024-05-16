@@ -2,7 +2,7 @@ assemblies:
     dimer:
         reference: Mpro-IBM0045
         biomol: A,B
-        chains: A, A(-x,y,-z)
+        chains: A,A(-x,y,-z)
     monomer:
         reference: 7ql8-pdb-bundle1
         biomol: B
