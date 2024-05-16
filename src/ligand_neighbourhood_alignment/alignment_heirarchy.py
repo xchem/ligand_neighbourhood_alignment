@@ -1,5 +1,6 @@
 from rich import print as rprint
 import gemmi
+import numpy as np
 
 from ligand_neighbourhood_alignment import dt, constants
 
@@ -150,6 +151,7 @@ def _landmark_to_structure(lm):
 
     ...
 
+
 def _get_atoms(st):
     atoms = {}
     for model in st:
@@ -160,6 +162,7 @@ def _get_atoms(st):
 
     return atoms
 
+
 def _calculate_assembly_transform(
         ref=None,
         mov=None,
@@ -168,8 +171,10 @@ def _calculate_assembly_transform(
 ):
     # Convert to gemmi structures to use superposition algorithm there
     sup = gemmi.superpose_positions(
-        [gemmi.Position(x, y, z) for atom_id, (x, y, z ) in ref.items() if (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
-        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if (atom_id[0] == chain) & (atom_id in ref)& (atom_id[2] == 'CA')]
+        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in ref.items() if
+         (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
+        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
+         (atom_id[0] == chain) & (atom_id in ref) & (atom_id[2] == 'CA')]
     )
     transform = sup.transform
 
@@ -181,7 +186,8 @@ def _calculate_assembly_transform(
         "count": sup.count
     }
 
-def _calculate_assembly_transform_sequence(
+
+def _calculate_assembly_sequence(
         hierarchy,
         mov_assembly,
 ):
@@ -198,3 +204,41 @@ def _calculate_assembly_transform_sequence(
         running_assembly = next_assembly
 
     return assembly_sequence
+
+
+def _transform_to_gemmi(transform):
+    tr = gemmi.Transform()
+    tr.vec.fromlist(transform['vec'])
+    tr.mat.fromlist(transform['mat'])
+    return tr
+
+
+def _calculate_assembly_transform_sequence(
+        hierarchy,
+        mov_assembly,
+        assembly_landmarks
+):
+    # Get sequence of transforms
+    sequence = _calculate_assembly_sequence(hierarchy, mov_assembly)
+
+    # Get the sequence of transforms
+    transforms = []
+    moving = mov_assembly
+    for assembly, chain in sequence:
+        transform = _calculate_assembly_transform(
+            ref=assembly_landmarks[assembly],
+            mov=assembly_landmarks[moving],
+            chain=chain
+        )
+        moving = assembly
+        transforms.append(
+            _transform_to_gemmi(transform)
+        )
+
+    # Sum the transforms
+    tr = gemmi.Transform()
+    tr.vec.fromlist([0.0, 0.0, 0.0])
+    tr.mat.fromlist(np.eye(3).tolist())
+    for transform in transforms:
+        tr = transform.combine(tr)
+    return tr

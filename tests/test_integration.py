@@ -70,15 +70,35 @@ def test_calculate_assembly_transform(
     )
     rprint(transform)
 
-def test_calculate_assembly_transform_sequence(assemblies):
+def test_calculate_assembly_sequence(assemblies):
 
     # Generate alignment hierarchy
     hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
 
     #
-    transform_sequence = alignment_heirarchy._calculate_assembly_transform_sequence(hierarchy, 'fake_tetramer')
+    transform_sequence = alignment_heirarchy._calculate_assembly_sequence(hierarchy, 'fake_tetramer')
     rprint(transform_sequence)
 
+
+def test_calculate_assembly_transform_sequence(
+        pdb_paths,
+        assemblies
+):
+
+    # Get the landmarks for the assembly references
+    landmarks = {}
+    for assembly_name, assembly in assemblies.items():
+        landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(gemmi.read_structure(str(pdb_paths[assembly.reference])))
+
+    # Get the hierarchy
+    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+
+    # Calculate the full transform
+    alignment_heirarchy._calculate_assembly_transform_sequence(
+        hierarchy,
+        'fake_tetramer',
+        landmarks
+    )
 
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):
