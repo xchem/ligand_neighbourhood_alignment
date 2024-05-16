@@ -150,6 +150,15 @@ def _landmark_to_structure(lm):
 
     ...
 
+def _get_atoms(st):
+    atoms = {}
+    for model in st:
+        for chain in model:
+            for res in chain:
+                for atom in res:
+                    atoms[(chain, res.name, res.seqid.num, atom.name)] = atom
+
+    return atoms
 
 def _calculate_assembly_transform(
         ref=None,
@@ -166,7 +175,7 @@ def _calculate_assembly_transform(
     #     rprint(structure_to_landmarks(mov_st))
 
     # Get transform using gemmi superposition
-    ref_pol = ref_st[0]['B'].get_polymer()
+    ref_pol = ref_st[0][chain].get_polymer()
     if debug:
         rprint(len(ref_pol))
         rprint(ref_pol)
@@ -177,7 +186,13 @@ def _calculate_assembly_transform(
     ptype = ref_pol.check_polymer_type()
     if debug:
         rprint(f'Ptype: {ptype}')
-    sup = gemmi.calculate_superposition(ref_pol, mov_pol, ptype, gemmi.SupSelect.CaP)
+
+
+    sup = gemmi.superpose_positions(
+        [gemmi.Position(x, y, z) for atom_id, (x, y, z ) in ref.items() if (atom_id[0] == chain) & (atom_id in mov)]
+        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if (atom_id[0] == chain) & (atom_id in ref)]
+    )
+    # sup = gemmi.calculate_superposition(ref_pol, mov_pol, ptype, gemmi.SupSelect.CaP)
     transform = sup.transform
 
     # transform to interchangable format and return
