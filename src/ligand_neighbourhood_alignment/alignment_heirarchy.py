@@ -145,6 +145,7 @@ def _landmark_to_structure(lm):
         new_atom.pos = pos
         st[0][chain][seqid][0].add_atom(new_atom)
 
+    st.setup_entities()
     return st
 
     ...
