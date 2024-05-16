@@ -167,10 +167,10 @@ def _calculate_assembly_transform(
         debug=False
 ):
     # Convert to gemmi structures to use superposition algorithm there
-    ref_st = _landmark_to_structure(ref)
+    # ref_st = _landmark_to_structure(ref)
     # if debug:
     #     rprint(structure_to_landmarks(ref_st))
-    mov_st = _landmark_to_structure(mov)
+    # mov_st = _landmark_to_structure(mov)
     # if debug:
     #     rprint(structure_to_landmarks(mov_st))
 
