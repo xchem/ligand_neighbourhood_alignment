@@ -104,6 +104,11 @@ def test_calculate_assembly_transform_sequence(
         debug=True
     )
     rprint(combined_transform)
+    tr = alignment_heirarchy._transform_to_gemmi(combined_transform)
+    mov = landmarks['fake_tetramer'][('C', ('GLN', '256'), 'CA')]
+    ref = landmarks['dimer'][('B', ('GLN', '256'), 'CA')]
+    aligned_mov = tr.apply(gemmi.Position(mov[0], mov[1], mov[2]))
+    rprint(f'Reference position: {ref} <- aligned position: {(aligned_mov.x, aligned_mov.y, aligned_mov.z)}')
 
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):
