@@ -103,6 +103,7 @@ def test_calculate_assembly_transform_sequence(
         landmarks,
         debug=True
     )
+    rprint(combined_transform)
 
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):
