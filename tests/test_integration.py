@@ -70,6 +70,10 @@ def test_calculate_assembly_transform(
     )
     rprint(transform)
 
+def test_compose_assembly_transforms():
+    ...
+
+
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):
 #     a = Aligner(upload_1_dir, constants.METADATA_FILE, assemblies_file)
