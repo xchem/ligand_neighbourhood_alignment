@@ -9,7 +9,7 @@ assemblies:
         chains: A
     fake_tetramer:
         reference: 8dz9
-        biomol: A,B,C,D
+        biomol: E,B,C,D
         chains: A,B,C,D
 crystalforms:
     xtalform1:
