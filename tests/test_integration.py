@@ -84,11 +84,14 @@ def test_calculate_assembly_transform_sequence(
         pdb_paths,
         assemblies
 ):
+    # Get the assembly structures
 
     # Get the landmarks for the assembly references
     landmarks = {}
     for assembly_name, assembly in assemblies.items():
-        landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(gemmi.read_structure(str(pdb_paths[assembly.reference])))
+        ref_st = gemmi.read_structure(str(pdb_paths[assembly.reference]))
+        as_st= alignment_heirarchy._get_assembly_st(assembly, ref_st)
+        landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(as_st)
 
     # Get the hierarchy
     hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
