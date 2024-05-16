@@ -216,7 +216,8 @@ def _transform_to_gemmi(transform):
 def _calculate_assembly_transform_sequence(
         hierarchy,
         mov_assembly,
-        assembly_landmarks
+        assembly_landmarks,
+        debug=False
 ):
     # Get sequence of transforms
     sequence = _calculate_assembly_sequence(hierarchy, mov_assembly)
@@ -230,6 +231,9 @@ def _calculate_assembly_transform_sequence(
             mov=assembly_landmarks[moving],
             chain=chain
         )
+        if debug:
+            rprint(f'{moving} -> {assembly}')
+            rprint(transform)
         moving = assembly
         transforms.append(
             _transform_to_gemmi(transform)
