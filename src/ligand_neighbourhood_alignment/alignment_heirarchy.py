@@ -169,6 +169,6 @@ def _calculate_assembly_transform(
     return {
         'vec': transform.vec.tolist(),
         'mat': transform.mat.tolist(),
-        'rmsd': transform.rmsd,
-        "count": transform.count
+        'rmsd': sup.rmsd,
+        "count": sup.count
     }
