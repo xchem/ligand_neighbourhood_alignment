@@ -7,9 +7,12 @@ assemblies:
         reference: 7ql8-pdb-bundle1
         biomol: B
         chains: A
+    fake_dimer:
+        reference: 8e1y
+        biomol: A,C
     fake_tetramer:
         reference: 8dz9
-        biomol: E,B,C,D
+        biomol: D,C,E,F
         chains: A,B,C,D
 crystalforms:
     xtalform1:
