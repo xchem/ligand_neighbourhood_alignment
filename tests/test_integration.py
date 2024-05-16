@@ -9,8 +9,8 @@ from ligand_neighbourhood_alignment import alignment_heirarchy
 
 
 def test_derive_alignment_heirarchy(
-    constants,
-    assemblies
+        constants,
+        assemblies
 ):
     # Run _derive_alignment_heirarchy
     reference_assemblies = alignment_heirarchy._derive_alignment_heirarchy(assemblies, debug=True)
@@ -19,9 +19,10 @@ def test_derive_alignment_heirarchy(
     # rprint(reference_assemblies)
     ...
 
+
 def test_chain_to_biochain(
-    constants,
-    assemblies,
+        constants,
+        assemblies,
         xtalforms
 ):
     rprint(xtalforms)
@@ -33,20 +34,40 @@ def test_chain_to_biochain(
                     f'Chain to Biochain: {xtalform_name} : {xtalform_assembly_name} : {chain} -> {biochain}'
                 )
 
+
 def test_structure_to_landmarks(
         pdb_paths
 ):
-    st = gemmi.read_structure(str(pdb_paths[0]))
+    st = gemmi.read_structure(str(pdb_paths['Mpro-IBM0045']))
     landmarks = alignment_heirarchy.structure_to_landmarks(st)
     rprint(landmarks)
-    ...
+
 
 def test_calculate_assembly_transform(
-    assembly_name,
-    alignment_heirarchy,
-    assembly_landmarks
+        pdb_paths,
+        assemblies
 ):
-    ...
+    # Generate assembly structure from reference
+    as1_ref = gemmi.read_structure(pdb_paths['Mpro-IBM0045'])
+    as1 = alignment_heirarchy._get_assembly_st(assemblies['dimer'], as1_ref)
+
+    as2_ref = gemmi.read_structure(pdb_paths['7ql8'])
+    as2 = alignment_heirarchy._get_assembly_st(assemblies['monomer'], as2_ref)
+
+    # Generate assembly landmarks from assembly structure
+    as1_lm = alignment_heirarchy.structure_to_landmarks(as1)
+    as2_lm = alignment_heirarchy.structure_to_landmarks(as2)
+
+    # Generate alignment hierarchy
+    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+
+    # Determine transform
+    transform = alignment_heirarchy._calculate_assembly_transform(
+        ref=as1_lm,
+        mov=as2_lm,
+        chain=hierarchy['monomer'][1]
+    )
+    return transform
 
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):

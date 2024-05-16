@@ -14,14 +14,15 @@ def constants():
         TEST_DATA_DIR = "data"
         ASSEMBLIES_FILE = "data/assemblies.yaml"
         TEST_OUTPUT_DIR = "tests/output"
-        DATA_PATHS = [
-            "data/5rgs.pdb",
-            "data/Mpro-i0130.pdb",
-            "data/refine_6.split.bound-state.pdb",
-            "data/refine_7.split.bound-state.pdb",
-            "data/refine_8.split.bound-state.pdb",
-            "data/refine_16.split.bound-state.pdb",
-        ]
+        DATA_PATHS = {
+            "5rgs": "data/5rgs.pdb",
+            "7ql8": "data/7ql8-pdb-bundle1.pdb",
+            "Mpro-i0130": "data/Mpro-i0130.pdb",
+            "Mpro-IBM0078":"data/refine_6.split.bound-state.pdb",
+            "Mpro-IBM0058":"data/refine_7.split.bound-state.pdb",
+            "Mpro-x0107":"data/refine_8.split.bound-state.pdb",
+            "Mpro-IBM0045": "data/refine_16.split.bound-state.pdb",
+        }
 
     return Constants()
 
@@ -50,7 +51,7 @@ def assemblies_file(
 
 @pytest.fixture(scope="session")
 def pdb_paths(constants):
-    pdb_paths = [Path(path) for path in constants.DATA_PATHS]
+    pdb_paths = {key: Path(path) for key, path in constants.DATA_PATHS.items()}
     return pdb_paths
 
 

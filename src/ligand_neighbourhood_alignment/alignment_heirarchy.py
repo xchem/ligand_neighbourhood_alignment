@@ -1,4 +1,5 @@
 from rich import print as rprint
+import gemmi
 
 from ligand_neighbourhood_alignment import dt, constants
 
@@ -76,6 +77,7 @@ def _chain_to_biochain(chain_name, xtalform: dt.XtalForm, assemblies: dict[str, 
 
 StructureLandmarks = dict[tuple[str, str, str], tuple[float, float, float]]
 
+
 def structure_to_landmarks(st):
     landmarks = {}
     for model in st:
@@ -89,8 +91,80 @@ def structure_to_landmarks(st):
 
     return landmarks
 
-def _calculate_assembly_transform(
-    assembly_name: str, alignment_heirarchy: AlignmentHeirarchy, assembly_landmarks: dict[str, StructureLandmarks]
-):
-    # Get the chain to align to
+
+def _get_assembly_st(as1, as1_ref):
+    # Setup new structure to add biochains to
+    new_st = gemmi.Structure()
+    new_model = gemmi.Model()
+
+    # Iterate over chain, biochain, transform tuples in the assembly
+    for generator in as1.generators:
+        # Generate the symmetry operation
+        op = gemmi.Op(generator.triplet)
+
+        # Create a clone of base chain to transform
+        new_chain = as1_ref[0][generator.chain].clone()
+
+        # Transform the residues
+        for residue in new_chain:
+            for atom in residue:
+                atom_frac = as1_ref.cell.fractionalize(atom.pos)
+                new_pos_frac = op.apply_to_xyz([atom_frac.x, atom_frac.y, atom_frac.z])
+                new_pos_orth = as1_ref.cell.orthogonalize(gemmi.Fractional(*new_pos_frac))
+                atom.pos = gemmi.Position(*new_pos_orth)
+        new_chain.name = generator.biomol
+        new_st[0].add_chain(new_chain)
+
+    new_st.add_model(new_model)
+    return new_st
+
+def _landmark_to_structure(lm):
+    st = gemmi.Structure()
+    model = gemmi.Model()
+    st.add_model(model)
+    used_chains = []
+    used_ress = []
+    for (chain, res, atom), (x, y, z) in lm.items():
+        if chain not in used_chains:
+            st[0].add_chain(gemmi.Chain(chain))
+            used_chains.append(chain)
+
+        if (chain, res) not in used_ress:
+            st[0][chain].add_residue(gemmi.Residue(res))
+            used_ress.append((chain, res))
+
+        new_atom = gemmi.Atom()
+        new_atom.name = atom
+        pos = gemmi.Position(x, y, z)
+        new_atom.pos = pos
+        st[0][chain][res][0].add_atom(atom)
+
+    return st
+
+
     ...
+
+def _calculate_assembly_transform(
+        ref=None,
+        mov=None,
+        chain=None,
+):
+
+    # Convert to gemmi structures to use superposition algorithm there
+    ref_st = _landmark_to_structure(ref)
+    mov_st = _landmark_to_structure(mov)
+
+    # Get transform using gemmi superposition
+    ref_pol = ref_st[0][chain].get_polymer()
+    mov_pol = mov_st[0][chain].get_polymer()
+    ptype = ref_pol.check_polymer_type()
+    sup = gemmi.calculate_superposition(ref_pol, mov_pol, ptype, gemmi.SupSelect.CaP)
+    transform = sup.transform
+
+    # transform to interchangable format
+
+
+    return {
+        'vec': transform.vec.tolist(),
+        'mat': transform.mat.tolist()
+    }
