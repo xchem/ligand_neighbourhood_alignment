@@ -95,7 +95,7 @@ def structure_to_landmarks(st):
 def _get_assembly_st(as1, as1_ref):
     # Setup new structure to add biochains to
     new_st = gemmi.Structure()
-    new_model = gemmi.Model()
+    new_model = gemmi.Model("0")
 
     # Iterate over chain, biochain, transform tuples in the assembly
     for generator in as1.generators:
@@ -120,7 +120,7 @@ def _get_assembly_st(as1, as1_ref):
 
 def _landmark_to_structure(lm):
     st = gemmi.Structure()
-    model = gemmi.Model()
+    model = gemmi.Model("0")
     st.add_model(model)
     used_chains = []
     used_ress = []
