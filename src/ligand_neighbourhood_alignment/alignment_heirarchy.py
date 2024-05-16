@@ -167,32 +167,10 @@ def _calculate_assembly_transform(
         debug=False
 ):
     # Convert to gemmi structures to use superposition algorithm there
-    # ref_st = _landmark_to_structure(ref)
-    # if debug:
-    #     rprint(structure_to_landmarks(ref_st))
-    # mov_st = _landmark_to_structure(mov)
-    # if debug:
-    #     rprint(structure_to_landmarks(mov_st))
-
-    # Get transform using gemmi superposition
-    # ref_pol = ref_st[0][chain].get_polymer()
-    # if debug:
-    #     rprint(len(ref_pol))
-    #     rprint(ref_pol)
-    # mov_pol = mov_st[0][chain].get_polymer()
-    # if debug:
-    #     rprint(len(mov_pol))
-    #     rprint(mov_pol)
-    # ptype = ref_pol.check_polymer_type()
-    # if debug:
-    #     rprint(f'Ptype: {ptype}')
-
-
     sup = gemmi.superpose_positions(
         [gemmi.Position(x, y, z) for atom_id, (x, y, z ) in ref.items() if (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
         [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if (atom_id[0] == chain) & (atom_id in ref)& (atom_id[2] == 'CA')]
     )
-    # sup = gemmi.calculate_superposition(ref_pol, mov_pol, ptype, gemmi.SupSelect.CaP)
     transform = sup.transform
 
     # transform to interchangable format and return
