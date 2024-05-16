@@ -48,10 +48,10 @@ def test_calculate_assembly_transform(
         assemblies
 ):
     # Generate assembly structure from reference
-    as1_ref = gemmi.read_structure(pdb_paths['Mpro-IBM0045'])
+    as1_ref = gemmi.read_structure(str(pdb_paths['Mpro-IBM0045']))
     as1 = alignment_heirarchy._get_assembly_st(assemblies['dimer'], as1_ref)
 
-    as2_ref = gemmi.read_structure(pdb_paths['7ql8'])
+    as2_ref = gemmi.read_structure(str(pdb_paths['7ql8']))
     as2 = alignment_heirarchy._get_assembly_st(assemblies['monomer'], as2_ref)
 
     # Generate assembly landmarks from assembly structure
