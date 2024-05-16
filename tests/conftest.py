@@ -17,6 +17,7 @@ def constants():
         DATA_PATHS = {
             "5rgs": "data/5rgs.pdb",
             "8e1y": "data/8e1y.pdb",
+            "8dz9": "data/8dz9.pdb",
             "7ql8": "data/7ql8-pdb-bundle1.pdb",
             "Mpro-i0130": "data/Mpro-i0130.pdb",
             "Mpro-IBM0078":"data/refine_6.split.bound-state.pdb",
