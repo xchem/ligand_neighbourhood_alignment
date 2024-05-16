@@ -97,7 +97,7 @@ def test_calculate_assembly_transform_sequence(
     hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
 
     # Calculate the full transform
-    alignment_heirarchy._calculate_assembly_transform_sequence(
+    combined_transform = alignment_heirarchy._calculate_assembly_transform_sequence(
         hierarchy,
         'fake_tetramer',
         landmarks,

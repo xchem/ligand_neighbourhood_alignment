@@ -245,4 +245,10 @@ def _calculate_assembly_transform_sequence(
     tr.mat.fromlist(np.eye(3).tolist())
     for transform in transforms:
         tr = transform.combine(tr)
-    return tr
+    return {
+        'vec': tr.vec.tolist(),
+        'mat': tr.mat.tolist(),
+        'rmsd': None,
+        "count": None
+    }
+
