@@ -189,7 +189,7 @@ def _calculate_assembly_transform(
 
 
     sup = gemmi.superpose_positions(
-        [gemmi.Position(x, y, z) for atom_id, (x, y, z ) in ref.items() if (atom_id[0] == chain) & (atom_id in mov)]
+        [gemmi.Position(x, y, z) for atom_id, (x, y, z ) in ref.items() if (atom_id[0] == chain) & (atom_id in mov)],
         [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if (atom_id[0] == chain) & (atom_id in ref)]
     )
     # sup = gemmi.calculate_superposition(ref_pol, mov_pol, ptype, gemmi.SupSelect.CaP)
