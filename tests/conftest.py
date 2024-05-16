@@ -16,6 +16,7 @@ def constants():
         TEST_OUTPUT_DIR = "tests/output"
         DATA_PATHS = {
             "5rgs": "data/5rgs.pdb",
+            "8e1y": "data/8e1y.pdb",
             "7ql8": "data/7ql8-pdb-bundle1.pdb",
             "Mpro-i0130": "data/Mpro-i0130.pdb",
             "Mpro-IBM0078":"data/refine_6.split.bound-state.pdb",
