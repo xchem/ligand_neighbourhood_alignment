@@ -124,6 +124,7 @@ def _landmark_to_structure(lm):
     st = gemmi.Structure()
     model = gemmi.Model("0")
     st.add_model(model)
+
     used_chains = []
     used_ress = []
     for (chain, (res_name, seqid), atom), (x, y, z) in lm.items():
@@ -157,9 +158,9 @@ def _calculate_assembly_transform(
 ):
     # Convert to gemmi structures to use superposition algorithm there
     ref_st = _landmark_to_structure(ref)
-    rprint(ref_st)
+    rprint(structure_to_landmarks(ref_st))
     mov_st = _landmark_to_structure(mov)
-    rprint(mov_st)
+    rprint(structure_to_landmarks(mov_st))
 
     # Get transform using gemmi superposition
     ref_pol = ref_st[0][chain].get_polymer()
