@@ -165,8 +165,7 @@ def _calculate_assembly_transform(
     sup = gemmi.calculate_superposition(ref_pol, mov_pol, ptype, gemmi.SupSelect.CaP)
     transform = sup.transform
 
-    # transform to interchangable format
-
+    # transform to interchangable format and return
     return {
         'vec': transform.vec.tolist(),
         'mat': transform.mat.tolist(),
