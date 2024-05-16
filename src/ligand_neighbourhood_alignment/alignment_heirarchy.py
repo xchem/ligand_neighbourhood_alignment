@@ -187,11 +187,13 @@ def _calculate_assembly_transform_sequence(
 ):
     # Get the assembly sequence
     assembly_sequence = []
+    running_assembly = mov_assembly
     while True:
-        next_assembly, alignment_chain = hierarchy[mov_assembly]
+        next_assembly, alignment_chain = hierarchy[running_assembly]
+        running_assembly = next_assembly
         if len(assembly_sequence) != 0:
-                if next_assembly == assembly_sequence[-1][0]:
-                    break
+            if next_assembly == assembly_sequence[-1][0]:
+                break
         else:
             assembly_sequence.append((next_assembly, alignment_chain))
 
