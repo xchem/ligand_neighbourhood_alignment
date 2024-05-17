@@ -258,6 +258,9 @@ def _chain_to_xtalform_assembly(chain, xtalform):
         if chain in [x for x in assembly.chains]:
             return assembly_name
 
+    all_chains = {[x for x in assembly.chains] for assembly_name, assembly in xtalform.assemblies.items()}
+    raise Exception(f'Chain {chain} not found in assembly chains: {all_chains}')
+
 
 def _generate_assembly_from_xtalform(
         st,
