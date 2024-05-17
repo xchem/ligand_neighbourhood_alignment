@@ -1154,11 +1154,11 @@ def _update(
         for chain in st[0]:
             chain_to_assembly_transforms[
                 (dtag, chain, version)] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
-                st,
-                chain,
-                dataset_assignments[dtag],
-                assemblies,
-                assembly_landmarks,
+                    st,
+                    chain,
+                    xtalforms[dataset_assignments[dtag]],
+                    assemblies,
+                    assembly_landmarks,
             )
 
     # Get neighbourhoods
