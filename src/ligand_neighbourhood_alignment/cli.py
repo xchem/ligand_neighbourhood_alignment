@@ -1158,7 +1158,11 @@ def _update(
             if chain.name not in xtalform_chains:
                 continue
             chain_to_assembly_transforms[
-                (dtag, chain.name, version)] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
+                (
+                    dtag,
+                    chain.name,
+                    # version,
+                )] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
                     st,
                     chain.name,
                     xtalforms[dataset_assignments[dtag]],
@@ -1371,7 +1375,7 @@ def _update(
                                     (
                                         conformer_site.reference_ligand_id[0],
                                         conformer_site.reference_ligand_id[1],
-                                        conformer_site.reference_ligand_id[3]
+                                        # conformer_site.reference_ligand_id[3]
                                     )
                                 ],
                                 assembly_transform=assembly_transforms[
