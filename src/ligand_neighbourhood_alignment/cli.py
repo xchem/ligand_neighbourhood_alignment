@@ -81,6 +81,7 @@ from ligand_neighbourhood_alignment.make_data_json import (
 )
 from ligand_neighbourhood_alignment.generate_aligned_structures import _align_structure, _align_reference_structure
 from ligand_neighbourhood_alignment.align_xmaps import read_xmap, read_xmap_from_mtz, __align_xmap
+from ligand_neighbourhood_alignment import alignment_heirarchy
 
 
 def cas_ligands():
@@ -1113,6 +1114,23 @@ def _update(
     # Get the structures
     structures: dict = _get_structures(datasets)
 
+    # Get the assembly alignment hierarchy
+    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+
+    # Get the assembly hierarchy transforms
+    landmarks = {}
+    for assembly_name, assembly in assemblies.items():
+        as_st= alignment_heirarchy._get_assembly_st(assembly, structures[assembly.reference])
+        landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(as_st)
+
+    assembly_transforms = {}
+    for assembly_name, assembly in assemblies.items():
+        assembly_transforms[assembly_name] = alignment_heirarchy._calculate_assembly_transform_sequence(
+            hierarchy,
+            assembly_name,
+            landmarks,
+        )
+
     # Assign datasets
     for dtag, dataset in new_datasets.items():
         dataset_assignments[dtag] = _assign_dataset(
@@ -1323,6 +1341,9 @@ def _update(
                                 conformer_site_id,
                                 xtalforms[dataset_assignments[dtag]],
                                 aligned_structure_path,
+                                assembly_transforms,
+                                site_reference_xform=xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]],
+                                xform_to_assembly_transform=...,
                             )
                         else:
                             logger.info(f"Already output structure!")

@@ -28,3 +28,9 @@ crystalforms:
             1:
                 assembly: monomer
                 chains: A
+    xtalform3:
+        reference: 8e1y
+        assemblies:
+            1:
+                assembly: dimer
+                chains: A,B

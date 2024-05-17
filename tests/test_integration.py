@@ -110,6 +110,34 @@ def test_calculate_assembly_transform_sequence(
     aligned_mov = tr.apply(gemmi.Position(mov[0], mov[1], mov[2]))
     rprint(f'Reference position: {ref} <- aligned position: {(aligned_mov.x, aligned_mov.y, aligned_mov.z)}')
 
+def test_get_structure_chain_to_assembly_transform(
+    assemblies,
+    xtalforms,
+    pdb_paths
+):
+    # Get the landmarks for assembly references
+    landmarks = {}
+    for assembly_name, assembly in assemblies.items():
+        ref_st = gemmi.read_structure(str(pdb_paths[assembly.reference]))
+        as_st = alignment_heirarchy._get_assembly_st(assembly, ref_st)
+        landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(as_st)
+
+    # Select a test structure, chain and assembly
+    test_dataset = '8e1y'
+    st = gemmi.read_structure(pdb_paths[test_dataset])
+    xtalform = xtalforms['xtalform3']
+    chain = 'B'
+
+    #
+    tr = alignment_heirarchy._get_structure_chain_to_assembly_transform(
+        st,
+        chain,
+        xtalform,
+        assemblies,
+        landmarks
+    )
+    rprint(tr)
+
 # @pytest.mark.order(after="test_collator_upload_1")
 # def test_aligner_upload_1(constants, assemblies_file, upload_1_dir):
 #     a = Aligner(upload_1_dir, constants.METADATA_FILE, assemblies_file)

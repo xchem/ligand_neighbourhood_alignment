@@ -252,3 +252,74 @@ def _calculate_assembly_transform_sequence(
         "count": None
     }
 
+def _chain_to_xtalform_assembly(chain, xtalform):
+    for assembly_name, assembly in xtalform.assemblies.items():
+        if chain in [x for x in assembly.generators.chain]:
+            return assembly_name
+
+def _generate_assembly_from_xtalform(
+        st,
+        xtalform_assembly: dt.XtalFormAssembly,
+        assembly
+    ):
+    # Setup new structure to add biochains to
+    new_st = gemmi.Structure()
+    new_model = gemmi.Model("0")
+    new_st.add_model(new_model)
+
+    # Iterate over chain, biochain, transform tuples in the assembly
+    for biomol, chain, transform in zip(
+            [x.biomol for x in assembly[xtalform_assembly.assembly].generators],
+            xtalform_assembly.chains,
+            xtalform_assembly.transforms,
+    ):
+        # Generate the symmetry operation
+        op = gemmi.Op(transform)
+
+        # Create a clone of base chain to transform
+        new_chain = st[0][chain].clone()
+
+        # Transform the residues
+        for residue in new_chain:
+            for atom in residue:
+                atom_frac = st.cell.fractionalize(atom.pos)
+                new_pos_frac = op.apply_to_xyz([atom_frac.x, atom_frac.y, atom_frac.z])
+                new_pos_orth = st.cell.orthogonalize(gemmi.Fractional(*new_pos_frac))
+                atom.pos = gemmi.Position(*new_pos_orth)
+        new_chain.name = biomol
+        new_st[0].add_chain(new_chain)
+
+    new_st.add_model(new_model)
+    return new_st
+
+def _get_structure_chain_to_assembly_transform(
+    st,
+    chain,
+    xtalform,
+    assemblies,
+    assembly_landmarks
+):
+    # Map the chain to an xtalform assembly
+    xtalform_assembly_name = _chain_to_xtalform_assembly(chain, xtalform)
+    xtalform_assembly = xtalform.assemblies[xtalform_assembly_name]
+
+    # Generate the assembly from the dataset structure
+    assembly_st = _generate_assembly_from_xtalform(
+        st,
+        xtalform_assembly,
+        assemblies[xtalform_assembly.reference]
+    )
+
+    # Get the landmarks of the structure
+    mov_lm = structure_to_landmarks(assembly_st)
+
+    # Align the structure assembly to the reference assembly
+    tr = _calculate_assembly_transform(
+        ref=assembly_landmarks[xtalform_assembly.assembly],
+        mov=mov_lm,
+        chain=xtalform.assemblies
+    )
+
+    return tr
+
+    ...

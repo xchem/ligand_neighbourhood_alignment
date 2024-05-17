@@ -438,6 +438,8 @@ def _align_structure(
         conformer_site_id: str,
         xtalform: dt.XtalForm,
         out_path: Path,
+        assembly_transforms,
+        dataset_assignments
 ):
     shortest_path: list[tuple[str, str, str]] = nx.shortest_path(g, moving_ligand_id, reference_ligand_id)
     logger.debug(f"Shortest path: {shortest_path}")
@@ -471,6 +473,20 @@ def _align_structure(
     # Subsite alignment transform
     confomer_site_transform = transform_to_gemmi(conformer_site_transforms[(canonical_site_id, conformer_site_id)])
     running_transform = confomer_site_transform.combine(running_transform)
+
+    # Update the transform with the assembly alignment
+    # # Get the corresponding xtalform of the conformer site's reference hit dataset
+
+
+    # # Get the ligand binding chain of the reference hit
+
+    # # Get the biochain of the ligandbinding chain
+
+    # # Get the xtalform to assembly transform
+
+    # # Get the assembly alignment transform
+
+
 
     # Site alignment transform
     # canonical_site_transform = transform_to_gemmi(canonical_site_transforms[canonical_site_id])
