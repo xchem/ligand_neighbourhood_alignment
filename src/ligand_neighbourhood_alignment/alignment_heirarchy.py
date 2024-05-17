@@ -269,7 +269,7 @@ def _generate_assembly_from_xtalform(
 
     # Iterate over chain, biochain, transform tuples in the assembly
     for biomol, chain, transform in zip(
-            [x.biomol for x in assembly[xtalform_assembly.assembly].generators],
+            [x.biomol for x in assembly.generators],
             xtalform_assembly.chains,
             xtalform_assembly.transforms,
     ):
