@@ -1151,7 +1151,10 @@ def _update(
     # Get chain to assembly transforms
     chain_to_assembly_transforms = {}
     for dtag, st in structures.items():
+        xtalform_chains = [_chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in _xassembly.chains]
         for chain in st[0]:
+            if chain not in xtalform_chains:
+                continue
             chain_to_assembly_transforms[
                 (dtag, chain.name, version)] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
                     st,
