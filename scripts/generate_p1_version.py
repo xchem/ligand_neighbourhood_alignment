@@ -13,7 +13,7 @@ def main():
 
     # Setup new structure to add biochains to
     new_st = gemmi.Structure()
-    new_st.spacegroup_hm = 'P 1'
+    new_st.spacegroup_hm = gemmi.SpaceGroup('P 1').xhm
     new_st.cell = st.cell
     new_model = gemmi.Model("0")
     new_st.add_model(new_model)
