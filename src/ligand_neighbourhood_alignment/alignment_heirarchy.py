@@ -313,10 +313,9 @@ def _get_structure_chain_to_assembly_transform(
 
     # Get the landmarks of the structure
     mov_lm = structure_to_landmarks(assembly_st)
-    if debug:
-        rprint(f'Moving structure landmarks')
-        rprint(mov_lm)
-
+    # if debug:
+    #     rprint(f'Moving structure landmarks')
+    #     rprint(mov_lm)
 
     # Align the structure assembly to the reference assembly
     tr = _calculate_assembly_transform(
