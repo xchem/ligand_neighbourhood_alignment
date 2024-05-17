@@ -254,7 +254,7 @@ def _calculate_assembly_transform_sequence(
 
 def _chain_to_xtalform_assembly(chain, xtalform):
     for assembly_name, assembly in xtalform.assemblies.items():
-        if chain in [x for x in assembly.generators.chain]:
+        if chain in [x for x in assembly.chains]:
             return assembly_name
 
 def _generate_assembly_from_xtalform(
