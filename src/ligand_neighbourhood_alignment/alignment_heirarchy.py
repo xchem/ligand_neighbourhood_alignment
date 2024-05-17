@@ -252,16 +252,18 @@ def _calculate_assembly_transform_sequence(
         "count": None
     }
 
+
 def _chain_to_xtalform_assembly(chain, xtalform):
     for assembly_name, assembly in xtalform.assemblies.items():
         if chain in [x for x in assembly.chains]:
             return assembly_name
 
+
 def _generate_assembly_from_xtalform(
         st,
         xtalform_assembly: dt.XtalFormAssembly,
         assembly
-    ):
+):
     # Setup new structure to add biochains to
     new_st = gemmi.Structure()
     new_model = gemmi.Model("0")
@@ -292,13 +294,14 @@ def _generate_assembly_from_xtalform(
     new_st.add_model(new_model)
     return new_st
 
+
 def _get_structure_chain_to_assembly_transform(
-    st,
-    chain,
-    xtalform,
-    assemblies,
-    assembly_landmarks,
-    debug=False
+        st,
+        chain,
+        xtalform,
+        assemblies,
+        assembly_landmarks,
+        debug=False
 ):
     # Map the chain to an xtalform assembly
     xtalform_assembly_name = _chain_to_xtalform_assembly(chain, xtalform)

@@ -19,6 +19,7 @@ from ligand_neighbourhood_alignment.data import (  # Transform,; AlignableSite,;
     gemmi_to_transform,
     transform_to_gemmi,
 )
+from ligand_neighbourhood_alignment import alignment_heirarchy
 
 
 def superpose_structure(transform, structure):
@@ -264,6 +265,7 @@ def align_structure(
 
 from ligand_neighbourhood_alignment import dt
 
+
 def _mark_atom_pos_to_ni_pos_tup(point, mark, st):
     cra = mark.to_cra(st[0])
     ni = st.cell.find_nearest_pbc_position(
@@ -438,8 +440,9 @@ def _align_structure(
         conformer_site_id: str,
         xtalform: dt.XtalForm,
         out_path: Path,
-        assembly_transforms,
-        dataset_assignments
+        site_reference_xform,
+        chain_to_assembly_transform,
+        assembly_transform,
 ):
     shortest_path: list[tuple[str, str, str]] = nx.shortest_path(g, moving_ligand_id, reference_ligand_id)
     logger.debug(f"Shortest path: {shortest_path}")
@@ -475,18 +478,11 @@ def _align_structure(
     running_transform = confomer_site_transform.combine(running_transform)
 
     # Update the transform with the assembly alignment
-    # # Get the corresponding xtalform of the conformer site's reference hit dataset
-
-
-    # # Get the ligand binding chain of the reference hit
-
-    # # Get the biochain of the ligandbinding chain
-
     # # Get the xtalform to assembly transform
+    running_transform = alignment_heirarchy._transform_to_gemmi(chain_to_assembly_transform).combine(running_transform)
 
     # # Get the assembly alignment transform
-
-
+    running_transform = alignment_heirarchy._transform_to_gemmi(assembly_transform).combine(running_transform)
 
     # Site alignment transform
     # canonical_site_transform = transform_to_gemmi(canonical_site_transforms[canonical_site_id])
@@ -495,8 +491,6 @@ def _align_structure(
     logger.debug(f"Transform from native frame to reference frame is: {gemmi_to_transform(running_transform)}")
 
     _structure = superpose_structure(running_transform, reduced_structure)
-
-
 
     # Write the fully aligned structure
     _structure.write_pdb(str(out_path))
