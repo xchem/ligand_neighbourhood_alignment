@@ -36,7 +36,6 @@ def main():
         new_chain.name = generator.biomol
         new_st[0].add_chain(new_chain)
 
-    new_st.add_model(new_model)
     new_st.write_minimal_pdb('Mpro-x0107_fake_P1.pdb')
 
 
