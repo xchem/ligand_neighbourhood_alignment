@@ -307,7 +307,7 @@ def _get_structure_chain_to_assembly_transform(
     assembly_st = _generate_assembly_from_xtalform(
         st,
         xtalform_assembly,
-        assemblies[xtalform_assembly.reference]
+        assemblies[xtalform_assembly.assembly]
     )
 
     # Get the landmarks of the structure
