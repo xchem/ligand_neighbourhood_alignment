@@ -36,7 +36,10 @@ def main():
         new_chain.name = generator.biomol
         new_st[0].add_chain(new_chain)
 
-    new_st.write_minimal_pdb('Mpro-x0107_fake_P1.pdb')
+    new_st.setup_entities()
+    print(new_st.cell)
+    print(new_st.spacegroup_hm)
+    new_st.write_pdb('Mpro-x0107_fake_P1.pdb')
 
 
 if __name__ == "__main__":
