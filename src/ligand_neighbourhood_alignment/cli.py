@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import yaml
 from loguru import logger
+from rich import print as rprint
 
 logger.remove()  # for someone not familiar with the lib, whats going on here?
 logger.add(sys.stdout, level="INFO")
@@ -1325,6 +1326,7 @@ def _update(
     # for canonical_site_id, canonical_site in canonical_sites.items():
     #     for conformer_site_id, conformer_site in canonical_site.conformer_sites.items():
     #         for lid in conformer_site.ligand_ids:
+    rprint(chain_to_assembly_transforms)
     for dtag, dataset_alignment_info in fs_model.alignments.items():
         for chain, chain_alignment_info in dataset_alignment_info.items():
             for residue, residue_alignment_info in chain_alignment_info.items():
