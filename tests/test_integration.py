@@ -124,7 +124,7 @@ def test_get_structure_chain_to_assembly_transform(
 
     # Select a test structure, chain and assembly
     test_dataset = '8e1y'
-    st = gemmi.read_structure(pdb_paths[test_dataset])
+    st = gemmi.read_structure(str(pdb_paths[test_dataset]))
     xtalform = xtalforms['xtalform3']
     chain = 'B'
 
