@@ -325,7 +325,7 @@ def _update_reference_structure_transforms(
     dataset_assignments
 ):
     # Get the biochain of the canonical site
-    site_reference_ligand_id = conformer_sites[canonical_site.reference_conformer_site_id].reference_ligand_id[1]
+    site_reference_ligand_id = conformer_sites[canonical_site.reference_conformer_site_id].reference_ligand_id
     site_reference_ligand_xtalform = xtalforms[dataset_assignments[site_reference_ligand_id[0]]]
     canonical_site_biochain = alignment_heirarchy._chain_to_biochain(
         site_reference_ligand_id[1],
