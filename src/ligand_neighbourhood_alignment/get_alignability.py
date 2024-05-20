@@ -109,7 +109,7 @@ def _match_cas(
     ligand_1_neighbourhood: dt.Neighbourhood,
     ligand_2_neighbourhood: dt.Neighbourhood,
     min_alignable_atoms: int = 9,  # 10 splits A71, but some things almost identical end up in different clusters
-    max_alignable_rmsd: float = 2.0,
+    max_alignable_rmsd: float = 1.0,
 ):
 
     alignable_cas = []

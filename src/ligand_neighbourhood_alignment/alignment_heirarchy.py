@@ -7,7 +7,7 @@ from ligand_neighbourhood_alignment import dt, constants
 AlignmentHeirarchy = dict[str, tuple[str, str]]
 
 
-def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False) -> AlignmentHeirarchy:
+def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False) :
     # The Alignment hierarchy is the graph of alignments one must perform in order to get from
     # a ligand canonical site to the Reference Assembly Frame
 
@@ -66,7 +66,7 @@ def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False)
     # 4. Check per-chain RMSDs and warn if any are high
     # TODO
 
-    return reference_assemblies
+    return reference_assemblies, chain_priority
 
 
 def _chain_to_biochain(chain_name, xtalform: dt.XtalForm, assemblies: dict[str, dt.Assembly]) -> str:

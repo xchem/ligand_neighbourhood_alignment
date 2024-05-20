@@ -1121,7 +1121,7 @@ def _update(
     structures: dict = _get_structures(datasets)
 
     # Get the assembly alignment hierarchy
-    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+    hierarchy, biochain_priorities = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
 
     # Get the assembly hierarchy transforms
     assembly_landmarks = {}
