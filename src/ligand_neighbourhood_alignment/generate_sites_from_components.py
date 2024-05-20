@@ -350,7 +350,8 @@ def _update_reference_structure_transforms(
     alignment_residues_ref_st = []
     alignment_residues_mov_st = []
     core_chain = reference_structure_biochains_inv[canonical_site_biochain]
-    for chain, res in canonical_site.residues:
+    for rid in canonical_site.residues:
+        chain, res = rid[0], rid[1]
         biochain = alignment_heirarchy._chain_to_biochain(
             chain,
             site_reference_ligand_xtalform,
