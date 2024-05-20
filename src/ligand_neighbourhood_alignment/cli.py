@@ -973,6 +973,7 @@ def _update_fs_model(
         canonical_sites: dict[str, dt.CanonicalSite],
         conformer_sites: dict[str, dt.ConformerSite],
         reference_datasets: dict[str, dt.Dataset],
+        reference_transforms
 ):
     # Iterate over canonical sites and their members, checking if they already have an output record and
     # if not creating one
@@ -1045,6 +1046,9 @@ def _update_fs_model(
     reference_alignments = fs_model.reference_alignments
     for dtag, dataset in reference_datasets.items():
         for canonical_site_id, canonical_site in canonical_sites.items():
+
+            if (dtag, canonical_site_id) not in reference_transforms:
+                continue
 
             if not (fs_model.source_dir / constants.ALIGNED_FILES_DIR / dtag).exists():
                 os.mkdir(fs_model.source_dir / constants.ALIGNED_FILES_DIR / dtag)
@@ -1311,6 +1315,9 @@ def _update(
                     structures,
                     canonical_site,
                     conformer_sites,
+                    assemblies,
+                    xtalforms,
+                    dataset_assignments
                 )
     logger.info(f"Now have {len(reference_structure_transforms)} reference structure transforms")
     save_reference_structure_transforms(
@@ -1324,6 +1331,7 @@ def _update(
         canonical_sites,
         conformer_sites,
         reference_datasets,
+        reference_structure_transforms
     )
     _save_fs_model(fs_model)
 
