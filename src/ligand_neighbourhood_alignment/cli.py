@@ -1482,6 +1482,22 @@ def _update(
                                     canonical_site_id,
                                     aligned_event_map_path,
                                     aligned_res,
+                                    chain_to_assembly_transform=chain_to_assembly_transforms[
+                                        (
+                                            conformer_site.reference_ligand_id[0],
+                                            conformer_site.reference_ligand_id[1],
+                                            # conformer_site.reference_ligand_id[3]
+                                        )
+                                    ],
+                                    assembly_transform=assembly_transforms[
+                                        xtalforms[
+                                            dataset_assignments[conformer_site.reference_ligand_id[0]]].assemblies[
+                                            alignment_heirarchy._chain_to_xtalform_assembly(
+                                                conformer_site.reference_ligand_id[1],
+                                                xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
+                                            )
+                                        ].assembly
+                                    ],
                                 )
                             mtz_path = datasets[dtag].mtz
                             # print(f"Mtz path: {mtz_path}")
@@ -1502,6 +1518,22 @@ def _update(
                                     canonical_site_id,
                                     ligand_neighbourhood_output.aligned_xmaps[canonical_site_id],
                                     aligned_res,
+                                    chain_to_assembly_transform=chain_to_assembly_transforms[
+                                        (
+                                            conformer_site.reference_ligand_id[0],
+                                            conformer_site.reference_ligand_id[1],
+                                            # conformer_site.reference_ligand_id[3]
+                                        )
+                                    ],
+                                    assembly_transform=assembly_transforms[
+                                        xtalforms[
+                                            dataset_assignments[conformer_site.reference_ligand_id[0]]].assemblies[
+                                            alignment_heirarchy._chain_to_xtalform_assembly(
+                                                conformer_site.reference_ligand_id[1],
+                                                xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
+                                            )
+                                        ].assembly
+                                    ],
                                 )
                                 xmap = read_xmap_from_mtz(mtz_path, "Fo-Fc")
                                 __align_xmap(
@@ -1518,6 +1550,22 @@ def _update(
                                     canonical_site_id,
                                     ligand_neighbourhood_output.aligned_diff_maps[canonical_site_id],
                                     aligned_res,
+                                    chain_to_assembly_transform=chain_to_assembly_transforms[
+                                        (
+                                            conformer_site.reference_ligand_id[0],
+                                            conformer_site.reference_ligand_id[1],
+                                            # conformer_site.reference_ligand_id[3]
+                                        )
+                                    ],
+                                    assembly_transform=assembly_transforms[
+                                        xtalforms[
+                                            dataset_assignments[conformer_site.reference_ligand_id[0]]].assemblies[
+                                            alignment_heirarchy._chain_to_xtalform_assembly(
+                                                conformer_site.reference_ligand_id[1],
+                                                xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
+                                            )
+                                        ].assembly
+                                    ],
                                 )
 
                         else:
