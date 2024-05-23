@@ -1118,7 +1118,9 @@ def _update(
         # canonical_site_transforms: dict[str, dt.Transform],
         xtalform_sites: dict[str, dt.XtalFormSite],
         reference_structure_transforms: dict[tuple[str, str], dt.Transform],
-        version,
+        assembly_landmarks,
+        assembly_transforms,
+    version,
 ):
     logger.info(f"Version is: {version}")
     # Get the structures
@@ -1126,20 +1128,29 @@ def _update(
 
     # Get the assembly alignment hierarchy
     hierarchy, biochain_priorities = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+    alignment_heirarchy.save_yaml(fs_model.hierarchy, hierarchy, lambda x: x)
+    alignment_heirarchy.save_yaml(fs_model.biochain_priorities, biochain_priorities, lambda x: x)
 
     # Get the assembly hierarchy transforms
-    assembly_landmarks = {}
     for assembly_name, assembly in assemblies.items():
+        # Do not update if already have landmarks!
+        if assembly_name in assembly_landmarks:
+            continue
         as_st = alignment_heirarchy._get_assembly_st(assembly, structures[assembly.reference])
         assembly_landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(as_st)
+    alignment_heirarchy.save_yaml(fs_model.assembly_landmarks, assembly_landmarks, alignment_heirarchy.assembly_landmarks_to_dict)
 
-    assembly_transforms = {}
+
     for assembly_name, assembly in assemblies.items():
+        # Do not update if already have assembly transform!
+        if assembly_name in assembly_transforms:
+            continue
         assembly_transforms[assembly_name] = alignment_heirarchy._calculate_assembly_transform_sequence(
             hierarchy,
             assembly_name,
             assembly_landmarks,
         )
+    alignment_heirarchy.save_yaml(fs_model.assembly_transforms, assembly_transforms, lambda x: x)
 
     # Assign datasets
     for dtag, dataset in new_datasets.items():
@@ -1173,6 +1184,7 @@ def _update(
                     assemblies,
                     assembly_landmarks,
             )
+    alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms, alignment_heirarchy.chain_to_assembly_transforms_to_dict)
 
     # Get neighbourhoods
     logger.info(f"Updating neighbourhoods")
@@ -1339,7 +1351,6 @@ def _update(
     # for canonical_site_id, canonical_site in canonical_sites.items():
     #     for conformer_site_id, conformer_site in canonical_site.conformer_sites.items():
     #         for lid in conformer_site.ligand_ids:
-    rprint(chain_to_assembly_transforms)
     for dtag, dataset_alignment_info in fs_model.alignments.items():
         for chain, chain_alignment_info in dataset_alignment_info.items():
             for residue, residue_alignment_info in chain_alignment_info.items():

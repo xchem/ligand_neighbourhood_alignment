@@ -1,13 +1,14 @@
 from rich import print as rprint
 import gemmi
 import numpy as np
+import yaml
 
 from ligand_neighbourhood_alignment import dt, constants
 
 AlignmentHeirarchy = dict[str, tuple[str, str]]
 
 
-def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False) :
+def _derive_alignment_heirarchy(assemblies: dict[str, dt.Assembly], debug=False):
     # The Alignment hierarchy is the graph of alignments one must perform in order to get from
     # a ligand canonical site to the Reference Assembly Frame
 
@@ -248,8 +249,8 @@ def _calculate_assembly_transform_sequence(
     return {
         'vec': tr.vec.tolist(),
         'mat': tr.mat.tolist(),
-        'rmsd': None,
-        "count": None
+        'rmsd': 0.0,
+        "count": 0
     }
 
 
@@ -258,7 +259,8 @@ def _chain_to_xtalform_assembly(chain, xtalform):
         if chain in [x for x in assembly.chains]:
             return assembly_name
 
-    all_chains = {assembly_name: [x for x in assembly.chains] for assembly_name, assembly in xtalform.assemblies.items()}
+    all_chains = {assembly_name: [x for x in assembly.chains] for assembly_name, assembly in
+                  xtalform.assemblies.items()}
     raise Exception(f'Chain {chain} not found in assembly chains: {all_chains}')
 
 
@@ -332,4 +334,68 @@ def _get_structure_chain_to_assembly_transform(
 
     return tr
 
+
+def save_yaml(path, obj, obj_to_dict):
+    with open(path, "w") as f:
+        dic = obj_to_dict(obj)
+        yaml.safe_dump(dic, f, sort_keys=False)
+
+
+def load_yaml(path, dict_to_obj):
+    with open(path, "r") as f:
+        dic = yaml.safe_load(f)
+
+    return dict_to_obj(dic)
+
+
+# def _save_hierarchy(fs_model, hierarchy: dict[str, tuple[str, str]]):
+#     ...
+#
+#
+# def _save_biochain_priorities(fs_model, biochain_priorities: dict[str, int]):
+#     ...
+
+
+def assembly_landmarks_to_dict(assembly_landmarks: dict[tuple[str, tuple[str, str], str], tuple[float, float, float]]):
+    dic = {}
+    for k, v in assembly_landmarks.items():
+        key = "~".join([k[0], k[1][0], k[1][1], k[2]])
+        dic[key] = v
+
+    return dic
     ...
+
+
+# def _save_assembly_transforms(fs_model, assembly_transforms: dict[str]):
+    # {
+    #     'vec': tr.vec.tolist(),
+    #     'mat': tr.mat.tolist(),
+    #     'rmsd': 0.0,
+    #     "count": 0
+    # }
+    ...
+
+
+def chain_to_assembly_transforms_to_dict(chain_to_assembly_transforms: dict[tuple[str, str]]):
+    dic = {}
+    for k, v in chain_to_assembly_transforms.items():
+        key = "~".join([k[0], k[1]])
+        dic[key] = v
+
+    return dic
+
+def dict_to_chain_to_assembly_transforms(dic):
+    obj = {}
+    for k, v in dic.items():
+        obj[(x for x in '~'.split(k))] = v
+
+    return obj
+
+def dict_to_assembly_landmarks(dic):
+    obj = {}
+    for k, v in dic.items():
+        chain, rname, rid, aname = (x for x in '~'.split(k))
+        obj[(chain, (rname, rid), aname)] = v
+
+    return obj
+...
