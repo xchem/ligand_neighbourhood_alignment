@@ -11,6 +11,12 @@ CONFORMER_SITE_FILE: str = "conformer_sites.json"
 CANONICAL_SITE_FILE: str = "canonical_sites.json"
 XTALFORM_SITE_FILE: str = "ctalform_sites.json"
 
+HIERARCHY_YAML = 'hierarchy.yaml'
+BIOCHAIN_PRIORITIES_YAML = 'biochain_priorities.yaml'
+ASSEMBLY_LANDMARKS_YAML = 'assembly_landmarks.yaml'
+ASSEMBLY_TRANSFORMS_YAML = 'assembly_transforms.yaml'
+CHAIN_TO_ASSEMBLY_YAML = 'chain_to_assembly.yaml'
+
 OBSERVED_SITES_FILE_NAME: str = ""
 SITES_FILE_NAME: str = "sites.json"
 
