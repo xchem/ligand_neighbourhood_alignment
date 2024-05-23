@@ -358,9 +358,11 @@ def load_yaml(path, dict_to_obj):
 
 def assembly_landmarks_to_dict(assembly_landmarks: dict[tuple[str, tuple[str, str], str], tuple[float, float, float]]):
     dic = {}
-    for k, v in assembly_landmarks.items():
-        key = "~".join([k[0], k[1][0], k[1][1], k[2]])
-        dic[key] = v
+    for assembly, data in assembly_landmarks.items():
+        dic[assembly] = {}
+        for k, v in data.items():
+            key = "~".join([k[0], k[1][0], k[1][1], k[2]])
+            dic[assembly][key] = v
 
     return dic
     ...
@@ -393,9 +395,11 @@ def dict_to_chain_to_assembly_transforms(dic):
 
 def dict_to_assembly_landmarks(dic):
     obj = {}
-    for k, v in dic.items():
-        chain, rname, rid, aname = (x for x in '~'.split(k))
-        obj[(chain, (rname, rid), aname)] = v
+    for assembly, data in dic.items():
+        obj[assembly] = {}
+        for k, v in dic.items():
+            chain, rname, rid, aname = (x for x in '~'.split(k))
+            obj[assembly][(chain, (rname, rid), aname)] = v
 
     return obj
 ...
