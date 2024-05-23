@@ -59,7 +59,7 @@ def test_calculate_assembly_transform(
     as2_lm = alignment_heirarchy.structure_to_landmarks(as2)
 
     # Generate alignment hierarchy
-    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+    hierarchy, chain_priority = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
 
     # Determine transform
     transform = alignment_heirarchy._calculate_assembly_transform(
@@ -73,7 +73,7 @@ def test_calculate_assembly_transform(
 def test_calculate_assembly_sequence(assemblies):
 
     # Generate alignment hierarchy
-    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+    hierarchy, chain_priority = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
 
     #
     transform_sequence = alignment_heirarchy._calculate_assembly_sequence(hierarchy, 'fake_tetramer')
@@ -94,7 +94,7 @@ def test_calculate_assembly_transform_sequence(
         landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(as_st)
 
     # Get the hierarchy
-    hierarchy = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
+    hierarchy, chain_priority = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
 
     # Calculate the full transform
     combined_transform = alignment_heirarchy._calculate_assembly_transform_sequence(
