@@ -560,8 +560,8 @@ assembly_transform
 
     # Get the subsite transform
     # print(conformer_site_transforms)
-    conformer_site_transform = transform_to_gemmi(conformer_site_transforms[(canonical_site_id, conformer_site_id)])
-    running_transform = conformer_site_transform.combine(running_transform)
+    # conformer_site_transform = transform_to_gemmi(conformer_site_transforms[(canonical_site_id, conformer_site_id)])
+    # running_transform = conformer_site_transform.combine(running_transform)
 
     # Get the site transform
     # canonical_site_transform = transform_to_gemmi(canonical_site_transforms[canonical_site_id])
