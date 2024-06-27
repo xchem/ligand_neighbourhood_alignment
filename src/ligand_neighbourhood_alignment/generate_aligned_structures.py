@@ -474,8 +474,8 @@ def _align_structure(
         previous_ligand_id = next_ligand_id
 
     # Subsite alignment transform
-    confomer_site_transform = transform_to_gemmi(conformer_site_transforms[(canonical_site_id, conformer_site_id)])
-    running_transform = confomer_site_transform.combine(running_transform)
+    # confomer_site_transform = transform_to_gemmi(conformer_site_transforms[(canonical_site_id, conformer_site_id)])
+    # running_transform = confomer_site_transform.combine(running_transform)
 
     # Update the transform with the assembly alignment
     # # Get the xtalform to assembly transform
