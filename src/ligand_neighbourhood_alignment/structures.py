@@ -62,15 +62,18 @@ def get_transform_from_residues(rs: list[ResidueID], srs, ssrs):
     return sup.transform
 
 
-def _get_transform_from_residues(rs: list[tuple[str, str]], srs, ssrs):
+def _get_transform_from_residues(rs: list[tuple[str, str]], srs, ssrs, other_rs=None):
     # Transform from ssrs to srs
     acs = []
-    for resid in rs:
+    for j, resid in enumerate(rs):
         chain, num = resid
         try:
             srsr = srs[0][chain][f"{num}"][0]
-            ssrsr = ssrs[0][chain][f"{num}"][0]
-
+            if other_rs:
+                other_chain, other_num = other_rs[j]
+            else:
+                other_chain, other_num = chain, num
+            ssrsr = ssrs[0][other_chain][f"{other_num}"][0]
             srsca = srsr["CA"][0]
             ssrsca = ssrsr["CA"][0]
             acs.append((srsca, ssrsca))

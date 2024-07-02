@@ -11,6 +11,12 @@ CONFORMER_SITE_FILE: str = "conformer_sites.json"
 CANONICAL_SITE_FILE: str = "canonical_sites.json"
 XTALFORM_SITE_FILE: str = "ctalform_sites.json"
 
+HIERARCHY_YAML = 'hierarchy.yaml'
+BIOCHAIN_PRIORITIES_YAML = 'biochain_priorities.yaml'
+ASSEMBLY_LANDMARKS_YAML = 'assembly_landmarks.yaml'
+ASSEMBLY_TRANSFORMS_YAML = 'assembly_transforms.yaml'
+CHAIN_TO_ASSEMBLY_YAML = 'chain_to_assembly.yaml'
+
 OBSERVED_SITES_FILE_NAME: str = ""
 SITES_FILE_NAME: str = "sites.json"
 
@@ -57,3 +63,25 @@ REFERENCE_STRUCTURE_TRANSFORMS_YAML = "reference_structure_transforms.yaml"
 ALIGNED_REFERENCE_STRUCTURE_TEMPLATE = "{dtag}_{site}_ref.pdb"
 ALIGNED_REFERENCE_STRUCTURE_ARTEFACTS_TEMPLATE = "{dtag}_{site}_artefacts_ref.pdb"
 ALIGNED_REFERENCE_XMAP_TEMPLATE = "{dtag}_{site}_ref.ccp4"
+
+RESIDUE_NAMES = ["ALA",
+                 "ARG",
+                 "ASN",
+                 "ASP",
+                 "CYS",
+                 "GLN",
+                 "GLU",
+                 "HIS",
+                 "ILE",
+                 "LEU",
+                 "LYS",
+                 "MET",
+                 "PHE",
+                 "PRO",
+                 "SER",
+                 "THR",
+                 "TRP",
+                 "TYR",
+                 "VAL",
+                 "GLY",
+                 ]

@@ -7,6 +7,7 @@ import networkx as nx
 import numpy as np
 from loguru import logger
 
+from ligand_neighbourhood_alignment import alignment_heirarchy
 from ligand_neighbourhood_alignment.data import (
     Block,
     CanonicalSites,
@@ -529,6 +530,8 @@ def __align_xmap(
     canonical_site_id,
     output_path: Path,
     aligned_res,
+chain_to_assembly_transform,
+assembly_transform
 ):
     # Get the ligand neighbourhood
     # neighbourhood: LigandNeighbourhood = neighbourhoods.get_neighbourhood(lid)
@@ -557,12 +560,19 @@ def __align_xmap(
 
     # Get the subsite transform
     # print(conformer_site_transforms)
-    conformer_site_transform = transform_to_gemmi(conformer_site_transforms[(canonical_site_id, conformer_site_id)])
-    running_transform = conformer_site_transform.combine(running_transform)
+    # conformer_site_transform = transform_to_gemmi(conformer_site_transforms[(canonical_site_id, conformer_site_id)])
+    # running_transform = conformer_site_transform.combine(running_transform)
 
     # Get the site transform
     # canonical_site_transform = transform_to_gemmi(canonical_site_transforms[canonical_site_id])
     # running_transform = canonical_site_transform.combine()
+
+    # Update the transform with the assembly alignment
+    # # Get the xtalform to assembly transform
+    running_transform = alignment_heirarchy._transform_to_gemmi(chain_to_assembly_transform).combine(running_transform)
+
+    # # Get the assembly alignment transform
+    running_transform = alignment_heirarchy._transform_to_gemmi(assembly_transform).combine(running_transform)
 
     logger.debug(
         f"Transform from native frame to subsite frame to site frame is: {gemmi_to_transform(running_transform)}"

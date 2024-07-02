@@ -12,20 +12,22 @@ logger.remove()  # for someone not familiar with the lib, whats going on here?
 logger.add(sys.stdout, level="INFO")
 
 from ligand_neighbourhood_alignment import constants
-from ligand_neighbourhood_alignment.make_data_json import (
-    _get_ligand_binding_events_from_panddas,
-    _get_ligand_binding_events_from_structure,
-)
+
+
+# from ligand_neighbourhood_alignment.make_data_json import (
+#     _get_ligand_binding_events_from_panddas,
+#     _get_ligand_binding_events_from_structure,
+# )
 
 
 class LigandNeighbourhoodOutput:
     def __init__(
-        self,
-        aligned_structures: dict[str, str],
-        aligned_artefacts: dict[str, str],
-        aligned_xmaps: dict[str, str],
-        aligned_diff_maps: dict[str, str],
-        aligned_event_maps: dict[str, str],
+            self,
+            aligned_structures: dict[str, str],
+            aligned_artefacts: dict[str, str],
+            aligned_xmaps: dict[str, str],
+            aligned_diff_maps: dict[str, str],
+            aligned_event_maps: dict[str, str],
     ):
         self.aligned_structures = aligned_structures
         self.aligned_artefacts: dict[str, str] = aligned_artefacts
@@ -68,24 +70,29 @@ def symlink(old_path, new_path):
 
 class FSModel:
     def __init__(
-        self,
-        source_dir,
-        fs_model,
-        # assemblies,
-        xtalforms,
-        dataset_assignments,
-        ligand_neighbourhoods,
-        alignability_graph,
-        connected_components,
-        ligand_neighbourhood_transforms,
-        conformer_sites,
-        conformer_site_transforms,
-        canonical_sites,
-        # canonical_site_transforms,
-        xtalform_sites,
-        reference_structure_transforms,
-        alignments,
-        reference_alignments,
+            self,
+            source_dir,
+            fs_model,
+            # assemblies,
+            xtalforms,
+            dataset_assignments,
+            ligand_neighbourhoods,
+            alignability_graph,
+            connected_components,
+            ligand_neighbourhood_transforms,
+            conformer_sites,
+            conformer_site_transforms,
+            canonical_sites,
+            # canonical_site_transforms,
+            xtalform_sites,
+            reference_structure_transforms,
+            alignments,
+            reference_alignments,
+            hierarchy,
+            biochain_priorities,
+            assembly_landmarks,
+            assembly_transforms,
+            chain_to_assembly
     ):
         self.source_dir = source_dir
         self.fs_model = fs_model
@@ -104,6 +111,12 @@ class FSModel:
         self.reference_structure_transforms = reference_structure_transforms
         self.alignments = alignments
         self.reference_alignments = reference_alignments
+
+        self.hierarchy = hierarchy
+        self.biochain_priorities = biochain_priorities
+        self.assembly_landmarks = assembly_landmarks
+        self.assembly_transforms = assembly_transforms
+        self.chain_to_assembly = chain_to_assembly
 
     def symlink_old_data(self):
         for dtag, dataset_alignments in self.alignments.items():
@@ -155,8 +168,8 @@ class FSModel:
 
     @staticmethod
     def from_dir(
-        source_dir: str,
-        #        output_dir: str,
+            source_dir: str,
+            #        output_dir: str,
     ):
         source_dir = Path(source_dir)
         # output_dir = Path(output_dir)
@@ -184,6 +197,12 @@ class FSModel:
         alignments = {}
         reference_alignments = {}
 
+        hierarchy = source_dir / constants.HIERARCHY_YAML
+        biochain_priorities = source_dir / constants.BIOCHAIN_PRIORITIES_YAML
+        assembly_landmarks = source_dir / constants.ASSEMBLY_LANDMARKS_YAML
+        assembly_transforms = source_dir / constants.ASSEMBLY_TRANSFORMS_YAML
+        chain_to_assembly = source_dir / constants.CHAIN_TO_ASSEMBLY_YAML
+
         return FSModel(
             source_dir,
             fs_model,
@@ -202,6 +221,11 @@ class FSModel:
             reference_structure_transforms,
             alignments,
             reference_alignments,
+            hierarchy,
+            biochain_priorities,
+            assembly_landmarks,
+            assembly_transforms,
+            chain_to_assembly
         )
 
     @staticmethod
@@ -257,10 +281,15 @@ class FSModel:
             reference_structure_transforms=Path(dic["reference_structure_transforms"]),
             alignments=alignments,
             reference_alignments=reference_alignments,
+            hierarchy=Path(dic["hierarchy"]),
+            biochain_priorities=Path(dic["biochain_priorities"]),
+            assembly_landmarks=Path(dic["assembly_landmarks"]),
+            assembly_transforms=Path(dic["assembly_transforms"]),
+            chain_to_assembly=Path(dic["chain_to_assembly"])
         )
 
     def to_dict(
-        self,
+            self,
     ):
         dic = {}
         alignments = {}
@@ -302,6 +331,11 @@ class FSModel:
             "reference_structure_transforms": str(self.reference_structure_transforms),
             "alignments": alignments,
             "reference_alignments": reference_alignments,
+            'hierarchy': str(self.hierarchy),
+            'biochain_priorities': str(self.biochain_priorities),
+            'assembly_landmarks': str(self.assembly_landmarks),
+            'assembly_transforms': str(self.assembly_transforms),
+            'chain_to_assembly': str(self.chain_to_assembly)
         }
 
 
@@ -313,9 +347,9 @@ class Datasource:
 
 class PanDDA:
     def __init__(
-        self,
-        path: str,
-        # event_table_path: str
+            self,
+            path: str,
+            # event_table_path: str
     ):
         self.path = Path(path)
         self.event_table_path = self.path / constants.PANDDA_ANALYSES_DIR / constants.PANDDA_EVENTS_INSPECT_TABLE_PATH
@@ -323,12 +357,12 @@ class PanDDA:
 
 class LigandBindingEvent:
     def __init__(
-        self,
-        id,
-        dtag,
-        chain,
-        residue,
-        xmap,
+            self,
+            id,
+            dtag,
+            chain,
+            residue,
+            xmap,
     ):
         self.id: str = id
         self.dtag: str = dtag
@@ -339,12 +373,12 @@ class LigandBindingEvent:
 
 class Dataset:
     def __init__(
-        self,
-        dtag,
-        pdb,
-        xmap,
-        mtz,
-        ligand_binding_events: dict[tuple[str, str, str], LigandBindingEvent],
+            self,
+            dtag,
+            pdb,
+            xmap,
+            mtz,
+            ligand_binding_events: dict[tuple[str, str, str], LigandBindingEvent],
     ):
         self.dtag = dtag
         self.pdb = pdb
@@ -355,10 +389,10 @@ class Dataset:
 
 class SourceDataModel:
     def __init__(
-        self,
-        fs_model: FSModel,
-        datasources: list[Datasource],
-        panddas: list[PanDDA],
+            self,
+            fs_model: FSModel,
+            datasources: list[Datasource],
+            panddas: list[PanDDA],
     ):
         self.fs_model = fs_model
         self.datasources = datasources
@@ -366,10 +400,10 @@ class SourceDataModel:
 
     @staticmethod
     def from_fs_model(
-        fs_model: FSModel,
-        datasources,
-        datasource_types,
-        panddas,
+            fs_model: FSModel,
+            datasources,
+            datasource_types,
+            panddas,
     ):
         _datasources = []
         for datasource_path, datasource_type in zip(datasources, datasource_types):
@@ -575,12 +609,12 @@ class Transform:
 
 class Atom:
     def __init__(
-        self,
-        element: str,
-        x: float,
-        y: float,
-        z: float,
-        image: Transform,
+            self,
+            element: str,
+            x: float,
+            y: float,
+            z: float,
+            image: Transform,
     ):
         self.element: str = element
         self.x: float = x
@@ -638,10 +672,10 @@ class AlignabilityGraph:
 
 class ConformerSite:
     def __init__(
-        self,
-        residues: list[tuple[str, str]],
-        members: list[tuple[str, str, str, str]],
-        reference_ligand_id: tuple[str, str, str, str],
+            self,
+            residues: list[tuple[str, str]],
+            members: list[tuple[str, str, str, str]],
+            reference_ligand_id: tuple[str, str, str, str],
     ):
         self.residues: list[tuple[str, str]] = residues
         self.members: list[tuple[str, str, str, str]] = members
@@ -661,7 +695,7 @@ class ConformerSite:
         return ConformerSite(residues, members, (ref_dtag, ref_chain, ref_residue, version))
 
     def to_dict(
-        self,
+            self,
     ):
         return {
             "residues": ["/".join(resid) for resid in self.residues],
@@ -672,12 +706,12 @@ class ConformerSite:
 
 class CanonicalSite:
     def __init__(
-        self,
-        conformer_site_ids: list[str],
-        residues: list[tuple[str, str]],
-        reference_conformer_site_id: str,
-        global_reference_dtag: str,
-        centroid_res: tuple[str, str, str, str],
+            self,
+            conformer_site_ids: list[str],
+            residues: list[tuple[str, str]],
+            reference_conformer_site_id: str,
+            global_reference_dtag: str,
+            centroid_res: tuple[str, str, str, str],
     ):
         self.conformer_site_ids: list[str] = conformer_site_ids
         self.residues: list[tuple[str, str]] = residues
@@ -712,11 +746,11 @@ class CanonicalSite:
 
 class XtalFormSite:
     def __init__(
-        self,
-        xtalform_id: str,
-        crystallographic_chain: str,
-        canonical_site_id: str,
-        members: list[tuple[str, str, str]],
+            self,
+            xtalform_id: str,
+            crystallographic_chain: str,
+            canonical_site_id: str,
+            members: list[tuple[str, str, str]],
     ):
         self.xtalform_id: str = xtalform_id
         self.crystallographic_chain: str = crystallographic_chain
