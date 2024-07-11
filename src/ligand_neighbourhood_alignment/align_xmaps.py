@@ -397,6 +397,24 @@ def _get_box(neighbourhood: dt.Neighbourhood, xmap, transform):
 def _write_xmap_from_ccp4(ccp4, path):
     ccp4.write_ccp4_map(str(path))
 
+def _write_cut_xmap(new_xmap, aligned_res, crystallographic_output_path):
+    new_st = gemmi.Structure()
+    new_model = gemmi.Model("0")
+    new_st.add_model(new_model)
+    chain = gemmi.Chain("A")
+
+    new_st.add_model(new_model)
+    new_st[0].add_chain(chain)
+    new_st[0][0].add_residue(aligned_res)
+
+
+    ccp4 = gemmi.Ccp4Map()
+    ccp4.grid = new_xmap
+    ccp4.grid.spacegroup = gemmi.SpaceGroup("P1")
+    ccp4.update_ccp4_header()
+    ccp4.set_extent(new_st.calculate_fractional_box(margin=7.5))
+    ccp4.write_ccp4_map(str(crystallographic_output_path))
+
 
 def _write_xmap(xmap, path: Path, neighbourhood: dt.Neighbourhood, transform):
 
@@ -483,7 +501,7 @@ def get_new_map(cell, sample, frame_min, step):
 
 def resample_xmap(new_xmap, aligned_res):
     step = 0.5
-    border = 5.0
+    border = 7.5
     m = new_xmap
     # st = gemmi.read_structure('XX01ZVNS2B-x0051_B_301_XX01ZVNS2B-x0429+B+203.pdb')
     lig = aligned_res
@@ -529,6 +547,7 @@ def __align_xmap(
     # canonical_site_transforms,
     canonical_site_id,
     output_path: Path,
+crystallographic_output_path,
     aligned_res,
 chain_to_assembly_transform,
 assembly_transform
@@ -604,6 +623,10 @@ assembly_transform
         resampled_xmap,
         output_path,
     )
+
+    # Write a restricted crystallographic map
+    _write_cut_xmap(new_xmap, aligned_res, crystallographic_output_path)
+
 
 
 def read_xmap_from_mtz(
