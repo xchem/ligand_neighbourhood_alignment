@@ -407,6 +407,9 @@ def _write_cut_xmap(new_xmap, aligned_res, crystallographic_output_path):
     new_st[0].add_chain(chain)
     new_st[0][0].add_residue(aligned_res)
 
+    new_st.cell = new_xmap.unit_cell
+    new_st.spacegroup_hm = gemmi.find_spacegroup_by_name('P 1').hm
+
 
     ccp4 = gemmi.Ccp4Map()
     ccp4.grid = new_xmap
