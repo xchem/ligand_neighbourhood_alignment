@@ -717,8 +717,8 @@ class ConformerSite:
             self,
     ):
         return {
-            "residues": ["/".join(resid) for resid in self.residues].sort(),
-            "members": ["/".join(lid) for lid in self.members].sort(),
+            "residues": [x for x in sorted(["/".join(resid) for resid in self.residues])],
+            "members": [x for x in sorted(["/".join(lid) for lid in self.members])],
             "reference_ligand_id": "/".join(self.reference_ligand_id),
         }
 
@@ -756,7 +756,7 @@ class CanonicalSite:
     def to_dict(self):
         return {
             "conformer_site_ids": self.conformer_site_ids,
-            "residues": ["/".join(res) for res in self.residues].sort(),
+            "residues": [x for x in sorted(["/".join(res) for res in self.residues])],
             "reference_conformer_site_id": self.reference_conformer_site_id,
             "global_reference_dtag": self.global_reference_dtag,
             "centroid_res": "/".join(self.centroid_res),
