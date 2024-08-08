@@ -990,7 +990,7 @@ def _update_fs_model(
                 if residue not in alignments[dtag][chain]:
                     alignments[dtag][chain][residue] = {}
                 if version not in alignments[dtag][chain][residue]:
-                    alignments[dtag][chain][residue][version] = dt.LigandNeighbourhoodOutput({}, {}, {}, {}, {})
+                    alignments[dtag][chain][residue][version] = dt.LigandNeighbourhoodOutput({}, {}, {}, {}, {}, {}, {}, {})
 
                 ligand_neighbourhood_output: dt.LigandNeighbourhoodOutput = alignments[dtag][chain][residue][version]
 
@@ -1039,6 +1039,34 @@ def _update_fs_model(
                             / constants.ALIGNED_FILES_DIR
                             / dtag
                             / constants.ALIGNED_EVENT_MAP_TEMPLATE.format(
+                        dtag=dtag, chain=chain, residue=residue, version=version, site=canonical_site_id
+                    )
+                    )
+
+                    # Crystallographic maps
+                    ligand_neighbourhood_output.aligned_xmaps_crystallographic[canonical_site_id] = (
+                            fs_model.source_dir
+                            / constants.ALIGNED_FILES_DIR
+                            / dtag
+                            / constants.ALIGNED_XMAP_CRYSTALLOGRAPHIC_TEMPLATE.format(
+                        dtag=dtag, chain=chain, residue=residue, version=version, site=canonical_site_id
+                    )
+                    )
+
+                    ligand_neighbourhood_output.aligned_diff_maps_crystallographic[canonical_site_id] = (
+                            fs_model.source_dir
+                            / constants.ALIGNED_FILES_DIR
+                            / dtag
+                            / constants.ALIGNED_DIFF_CRYSTALLOGRAPHIC_TEMPLATE.format(
+                        dtag=dtag, chain=chain, residue=residue, version=version, site=canonical_site_id
+                    )
+                    )
+
+                    ligand_neighbourhood_output.aligned_event_maps_crystallographic[canonical_site_id] = (
+                            fs_model.source_dir
+                            / constants.ALIGNED_FILES_DIR
+                            / dtag
+                            / constants.ALIGNED_EVENT_MAP_CRYSTALLOGRAPHIC_TEMPLATE.format(
                         dtag=dtag, chain=chain, residue=residue, version=version, site=canonical_site_id
                     )
                     )
@@ -1492,6 +1520,7 @@ def _update(
                                     # canonical_site_transforms,
                                     canonical_site_id,
                                     aligned_event_map_path,
+                                    ligand_neighbourhood_output.aligned_event_maps_crystallographic[canonical_site_id],
                                     aligned_res,
                                     chain_to_assembly_transform=chain_to_assembly_transforms[
                                         (
@@ -1528,6 +1557,7 @@ def _update(
                                     # canonical_site_transforms,
                                     canonical_site_id,
                                     ligand_neighbourhood_output.aligned_xmaps[canonical_site_id],
+                                    ligand_neighbourhood_output.aligned_xmaps_crystallographic[canonical_site_id],
                                     aligned_res,
                                     chain_to_assembly_transform=chain_to_assembly_transforms[
                                         (
@@ -1560,6 +1590,7 @@ def _update(
                                     # canonical_site_transforms,
                                     canonical_site_id,
                                     ligand_neighbourhood_output.aligned_diff_maps[canonical_site_id],
+                                    ligand_neighbourhood_output.aligned_diff_maps_crystallographic[canonical_site_id],
                                     aligned_res,
                                     chain_to_assembly_transform=chain_to_assembly_transforms[
                                         (

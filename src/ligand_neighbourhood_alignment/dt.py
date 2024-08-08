@@ -28,12 +28,21 @@ class LigandNeighbourhoodOutput:
             aligned_xmaps: dict[str, str],
             aligned_diff_maps: dict[str, str],
             aligned_event_maps: dict[str, str],
+            aligned_xmaps_crystallographic,
+            aligned_diff_maps_crystallographic,
+            aligned_event_maps_crystallographic
+
     ):
         self.aligned_structures = aligned_structures
         self.aligned_artefacts: dict[str, str] = aligned_artefacts
+
         self.aligned_xmaps: dict[str, str] = aligned_xmaps
         self.aligned_diff_maps: dict[str, str] = aligned_diff_maps
         self.aligned_event_maps: dict[str, str] = aligned_event_maps
+
+        self.aligned_xmaps_crystallographic: dict[str, str] = aligned_xmaps_crystallographic
+        self.aligned_diff_maps_crystallographic: dict[str, str] = aligned_diff_maps_crystallographic
+        self.aligned_event_maps_crystallographic: dict[str, str] = aligned_event_maps_crystallographic
 
     @staticmethod
     def from_dict(dic, source_dir):
@@ -43,6 +52,9 @@ class LigandNeighbourhoodOutput:
             aligned_xmaps={k: Path(v) for k, v in dic["aligned_xmaps"].items()},
             aligned_diff_maps={k: Path(v) for k, v in dic["aligned_diff_maps"].items()},
             aligned_event_maps={k: Path(v) for k, v in dic["aligned_event_maps"].items()},
+            aligned_xmaps_crystallographic={k: Path(v) for k, v in dic["aligned_xmaps_crystallographic"].items()},
+            aligned_diff_maps_crystallographic={k: Path(v) for k, v in dic["aligned_diff_maps_crystallographic"].items()},
+            aligned_event_maps_crystallographic={k: Path(v) for k, v in dic["aligned_event_maps_crystallographic"].items()}
         )
 
     def to_dict(self):
@@ -59,6 +71,13 @@ class LigandNeighbourhoodOutput:
             },
             "aligned_event_maps": {
                 canonical_site_id: str(path) for canonical_site_id, path in self.aligned_event_maps.items()
+            },
+            "aligned_xmaps_crystallographic": {canonical_site_id: str(path) for canonical_site_id, path in self.aligned_xmaps_crystallographic.items()},
+            "aligned_diff_maps_crystallographic": {
+                canonical_site_id: str(path) for canonical_site_id, path in self.aligned_diff_maps_crystallographic.items()
+            },
+            "aligned_event_maps_crystallographic": {
+                canonical_site_id: str(path) for canonical_site_id, path in self.aligned_event_maps_crystallographic.items()
             },
         }
         return dic
@@ -698,8 +717,8 @@ class ConformerSite:
             self,
     ):
         return {
-            "residues": ["/".join(resid) for resid in self.residues],
-            "members": ["/".join(lid) for lid in self.members],
+            "residues": [x for x in sorted(["/".join(resid) for resid in self.residues])],
+            "members": [x for x in sorted(["/".join(lid) for lid in self.members])],
             "reference_ligand_id": "/".join(self.reference_ligand_id),
         }
 
@@ -737,7 +756,7 @@ class CanonicalSite:
     def to_dict(self):
         return {
             "conformer_site_ids": self.conformer_site_ids,
-            "residues": ["/".join(res) for res in self.residues],
+            "residues": [x for x in sorted(["/".join(res) for res in self.residues])],
             "reference_conformer_site_id": self.reference_conformer_site_id,
             "global_reference_dtag": self.global_reference_dtag,
             "centroid_res": "/".join(self.centroid_res),
