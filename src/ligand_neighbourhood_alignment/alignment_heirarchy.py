@@ -171,11 +171,14 @@ def _calculate_assembly_transform(
         debug=False
 ):
     # Convert to gemmi structures to use superposition algorithm there
+    ref_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in ref.items() if
+     (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
+    mov_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
+     (atom_id[0] == chain) & (atom_id in ref) & (atom_id[2] == 'CA')]
+
     sup = gemmi.superpose_positions(
-        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in ref.items() if
-         (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
-        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
-         (atom_id[0] == chain) & (atom_id in ref) & (atom_id[2] == 'CA')]
+        ref_poss,
+        mov_poss
     )
     transform = sup.transform
 
@@ -299,7 +302,7 @@ def _generate_assembly_from_xtalform(
         new_chain.name = biomol
         new_st[0].add_chain(new_chain)
 
-    new_st.add_model(new_model)
+    # new_st.add_model(new_model)
     return new_st
 
 
