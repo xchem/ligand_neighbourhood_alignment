@@ -180,6 +180,9 @@ def _calculate_assembly_transform(
     transform = sup.transform
 
     # transform to interchangable format and return
+    assert not np.isnan(np.array(transform.vec.tolist())).any()
+    assert not np.isnan(np.array(transform.mat.tolist())).any()
+
     return {
         'vec': transform.vec.tolist(),
         'mat': transform.mat.tolist(),
