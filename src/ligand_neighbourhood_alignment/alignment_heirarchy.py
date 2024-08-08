@@ -176,6 +176,9 @@ def _calculate_assembly_transform(
     mov_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
      (atom_id[0] == chain) & (atom_id in ref) & (atom_id[2] == 'CA')]
 
+    assert len(ref_poss) > 0, "There are no valid reference positions to align. You may want to check residues numbers are the same between your assembly reference and datasets."
+    assert len(mov_poss) > 0, "There are no valid dataset positions to align. You may want to check residues numbers are the same between your assembly reference and datasets."
+
     sup = gemmi.superpose_positions(
         ref_poss,
         mov_poss
