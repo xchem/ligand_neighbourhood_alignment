@@ -171,15 +171,24 @@ def _calculate_assembly_transform(
         debug=False
 ):
     # Convert to gemmi structures to use superposition algorithm there
+    ref_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in ref.items() if
+     (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
+    mov_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
+     (atom_id[0] == chain) & (atom_id in ref) & (atom_id[2] == 'CA')]
+
+    assert len(ref_poss) > 0, "There are no valid reference positions to align. You may want to check residues numbers are the same between your assembly reference and datasets."
+    assert len(mov_poss) > 0, "There are no valid dataset positions to align. You may want to check residues numbers are the same between your assembly reference and datasets."
+
     sup = gemmi.superpose_positions(
-        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in ref.items() if
-         (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
-        [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
-         (atom_id[0] == chain) & (atom_id in ref) & (atom_id[2] == 'CA')]
+        ref_poss,
+        mov_poss
     )
     transform = sup.transform
 
     # transform to interchangable format and return
+    assert not np.isnan(np.array(transform.vec.tolist())).any()
+    assert not np.isnan(np.array(transform.mat.tolist())).any()
+
     return {
         'vec': transform.vec.tolist(),
         'mat': transform.mat.tolist(),
@@ -296,7 +305,7 @@ def _generate_assembly_from_xtalform(
         new_chain.name = biomol
         new_st[0].add_chain(new_chain)
 
-    new_st.add_model(new_model)
+    # new_st.add_model(new_model)
     return new_st
 
 
