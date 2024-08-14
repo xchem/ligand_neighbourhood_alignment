@@ -408,10 +408,8 @@ def _drop_non_binding_chains_and_symmetrize_waters(
     new_chains = []
     for _model in new_structure:
         for _chain in _model:
-
             # Create a new chain to hold symmetry waters from non-binding chains
             new_chain = gemmi.Chain(_chain.name)
-
             # Iterate residues in the old chain, adding the local waters
             for _residue in _chain:
                 if (_chain.name, _residue.seqid.num) in other_ligand_ids:
