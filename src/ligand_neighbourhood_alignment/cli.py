@@ -1408,6 +1408,7 @@ def _update(
                                 moving_ligand_id,
                                 reference_ligand_id,
                                 ligand_neighbourhoods[moving_ligand_id],
+                                [nid for nid in ligand_neighbourhoods if nid[0] == dtag],
                                 alignability_graph,
                                 ligand_neighbourhood_transforms,
                                 conformer_site_transforms,

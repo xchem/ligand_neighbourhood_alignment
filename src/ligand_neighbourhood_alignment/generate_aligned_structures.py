@@ -1,4 +1,5 @@
 # import os
+import re
 from pathlib import Path
 
 import gemmi
@@ -279,8 +280,12 @@ def _drop_non_binding_chains_and_symmetrize_waters(
         _structure,
         neighbourhood,
         moving_ligand_id,
+        dataset_ligand_neighbourhood_ids,
         xtalform,
 ):
+    # Other Ligand IDs
+    other_ligand_ids = [(lid[1], lid[2]) for lid in dataset_ligand_neighbourhood_ids if not ((lid[1] == moving_ligand_id[1]) & (lid[2] == moving_ligand_id[2]))]
+
     # Get a copy of structure to edit
     new_structure = _structure.clone()
 
@@ -409,12 +414,15 @@ def _drop_non_binding_chains_and_symmetrize_waters(
 
             # Iterate residues in the old chain, adding the local waters
             for _residue in _chain:
+                if (_chain.name, _residue.seqid.num) in other_ligand_ids:
+                    continue
                 if _residue.name == 'HOH':
                     if _chain.name in local_water_chains:
                         if _residue.seqid.num in local_water_chains[_chain.name]:
                             new_chain.add_residue(_residue.clone())
                 else:
                     if (_chain.name in lig_assembly.chains) or (_chain.name in neighbourhood_chains):
+                        # Don't include other ligands
                         new_chain.add_residue(_residue.clone())
 
             if len(new_chain) > 0:
@@ -432,6 +440,7 @@ def _align_structure(
         moving_ligand_id: tuple[str, str, str],
         reference_ligand_id: tuple[str, str, str],
         neighbourhood: dt.Neighbourhood,
+        dataset_ligand_neighbourhood_ids,
         g,
         neighbourhood_transforms: dict[tuple[tuple[str, str, str], tuple[str, str, str]], dt.Transform],
         conformer_site_transforms: dict[tuple[str, str], dt.Transform],
@@ -452,6 +461,7 @@ def _align_structure(
         _structure,
         neighbourhood,
         moving_ligand_id,
+        dataset_ligand_neighbourhood_ids,
         xtalform)
 
     previous_ligand_id = moving_ligand_id
