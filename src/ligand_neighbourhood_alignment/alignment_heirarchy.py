@@ -176,7 +176,7 @@ def _calculate_assembly_transform(
     chain_matches_ref = [atom_id for atom_id in ref if atom_id[0] == chain ]
     chain_matches_mov = [atom_id for atom_id in ref if atom_id[0] == chain ]
     ref_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in ref.items() if
-     (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
+     (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')]
     mov_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
      (atom_id[0] == chain) & (atom_id in ref) & (atom_id[2] == 'CA')]
 
