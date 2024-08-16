@@ -171,6 +171,10 @@ def _calculate_assembly_transform(
         debug=False
 ):
     # Convert to gemmi structures to use superposition algorithm there
+    ref_matches = [atom_id for atom_id in ref if atom_id in mov]
+    mov_matches = [atom_id for atom_id in mov if atom_id in ref]
+    chain_matches_ref = [atom_id for atom_id in ref if atom_id[0] == chain ]
+    chain_matches_mov = [atom_id for atom_id in ref if atom_id[0] == chain ]
     ref_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in ref.items() if
      (atom_id[0] == chain) & (atom_id in mov) & (atom_id[2] == 'CA')],
     mov_poss = [gemmi.Position(x, y, z) for atom_id, (x, y, z) in mov.items() if
@@ -374,8 +378,6 @@ def assembly_landmarks_to_dict(assembly_landmarks: dict[tuple[str, tuple[str, st
             dic[assembly][key] = v
 
     return dic
-    ...
-
 
 # def _save_assembly_transforms(fs_model, assembly_transforms: dict[str]):
     # {
