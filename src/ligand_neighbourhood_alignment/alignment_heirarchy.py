@@ -409,8 +409,8 @@ def dict_to_assembly_landmarks(dic):
     for assembly, data in dic.items():
         obj[assembly] = {}
         for k, v in data.items():
-            key = [x for x in '~'.split(k)]
-            chain, rname, rid, aname = [x for x in '~'.split(k)]
+            # key = [x for x in '~'.split(k)]
+            chain, rname, rid, aname = [x for x in k.split('~')]
             obj[assembly][(chain, (rname, rid), aname)] = v
 
     return obj
