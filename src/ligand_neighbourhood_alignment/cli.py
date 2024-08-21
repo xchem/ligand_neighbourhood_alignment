@@ -1197,17 +1197,18 @@ def _update(
     for dtag, st in structures.items():
         xtalform_chains = [
             _chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in _xassembly.chains]
-        for chain in st[0]:
-            if chain.name not in xtalform_chains:
-                raise Exception(f"A xtalform assignment error has occured. Dataset {dtag} has chain {chain.name} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
+        dataset_chains = [_chain.name for _chain in st[0]]
+        for _chain in st[0]:
+            if _chain.name not in xtalform_chains:
+                raise Exception(f"A xtalform assignment error has occured. Dataset {dtag} has chain {_chain.name} in its chains {dataset_chains} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
             chain_to_assembly_transforms[
                 (
                     dtag,
-                    chain.name,
+                    _chain.name,
                     # version,
                 )] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
                     st,
-                    chain.name,
+                    _chain.name,
                     xtalforms[dataset_assignments[dtag]],
                     assemblies,
                     assembly_landmarks,
