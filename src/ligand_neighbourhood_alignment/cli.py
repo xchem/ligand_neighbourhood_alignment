@@ -1211,6 +1211,7 @@ def _update(
 
 
     # Get chain to assembly transforms
+    logger.info(f"Getting chain-to-assembly transforms...")
     chain_to_assembly_transforms = {}
     for dtag, st in structures.items():
         xtalform_chains = [
