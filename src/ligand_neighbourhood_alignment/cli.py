@@ -1199,7 +1199,7 @@ def _update(
             _chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in _xassembly.chains]
         for chain in st[0]:
             if chain.name not in xtalform_chains:
-                raise Exception(f"A xtalform assignment error has occured. Dataset has chain {chain.name} however its assigned xtalform {xtalforms[dataset_assignments[dtag]] } has chain {xtalform_chains}")
+                raise Exception(f"A xtalform assignment error has occured. Dataset {dtag} has chain {chain.name} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
             chain_to_assembly_transforms[
                 (
                     dtag,
