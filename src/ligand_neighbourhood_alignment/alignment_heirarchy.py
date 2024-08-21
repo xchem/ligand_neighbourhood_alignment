@@ -342,7 +342,7 @@ def _get_structure_chain_to_assembly_transform(
     tr = _calculate_assembly_transform(
         ref=assembly_landmarks[xtalform_assembly.assembly],
         mov=mov_lm,
-        chain=[x.biomol for x in assemblies[xtalform_assembly.assembly]][0]
+        chain=[x.biomol for x in assemblies[xtalform_assembly.assembly].generators][0]
     )
 
     return tr
