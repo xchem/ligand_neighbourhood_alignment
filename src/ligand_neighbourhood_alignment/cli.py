@@ -1218,7 +1218,7 @@ def _update(
             _chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in _xassembly.chains]
 
         dataset_chains = [_chain.name for _chain in st[0]]
-        dataset_ligand_chains = [_x for _x in neighborhoods if _x[0] == dtag]
+        dataset_ligand_chains = [_x[1] for _x in neighborhoods if _x[0] == dtag]
         for _chain in dataset_ligand_chains:
             if _chain not in xtalform_chains:
                 raise Exception(f"A xtalform assignment error has occured. Dataset {dtag} has chain {_chain} in its chains {dataset_chains} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
