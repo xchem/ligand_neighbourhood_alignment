@@ -1234,8 +1234,9 @@ def _update(
                     assemblies,
                     assembly_landmarks,
             )
+    logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
     alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms, alignment_heirarchy.chain_to_assembly_transforms_to_dict)
-
+    logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
 
     # Update graph
     logger.info(f"Updating alignment graph...")
