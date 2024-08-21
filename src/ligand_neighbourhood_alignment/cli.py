@@ -1238,8 +1238,6 @@ def _update(
     alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms, alignment_heirarchy.chain_to_assembly_transforms_to_dict)
     logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
 
-    raise Exception
-
     # Update graph
     logger.info(f"Updating alignment graph...")
     logger.info(f"Previously had {len(ligand_neighbourhood_transforms)} alignments between neighbourhoods")
