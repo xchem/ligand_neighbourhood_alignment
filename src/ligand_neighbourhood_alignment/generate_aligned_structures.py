@@ -285,7 +285,8 @@ def _drop_non_binding_chains_and_symmetrize_waters(
 ):
     # Other Ligand IDs
     other_ligand_ids = [(lid[1], lid[2]) for lid in dataset_ligand_neighbourhood_ids if not ((lid[1] == moving_ligand_id[1]) & (lid[2] == moving_ligand_id[2]))]
-
+    print(f'Other ligand ids...')
+    print(other_ligand_ids)
     # Get a copy of structure to edit
     new_structure = _structure.clone()
 
