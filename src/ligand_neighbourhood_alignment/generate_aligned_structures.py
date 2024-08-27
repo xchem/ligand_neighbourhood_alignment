@@ -412,7 +412,7 @@ def _drop_non_binding_chains_and_symmetrize_waters(
             new_chain = gemmi.Chain(_chain.name)
             # Iterate residues in the old chain, adding the local waters
             for _residue in _chain:
-                if (_chain.name, _residue.seqid.num) in other_ligand_ids:
+                if (_chain.name, str(_residue.seqid.num)) in other_ligand_ids:
                     continue
                 if _residue.name == 'HOH':
                     if _chain.name in local_water_chains:
