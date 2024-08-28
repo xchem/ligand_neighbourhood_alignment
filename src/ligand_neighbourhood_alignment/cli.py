@@ -1192,28 +1192,6 @@ def _update(
     _save_assignments(fs_model, dataset_assignments)
     logger.info(f"Assigned {len(dataset_assignments)} xtalform assignments to datasets!")
 
-    # Get chain to assembly transforms
-    chain_to_assembly_transforms = {}
-    for dtag, st in structures.items():
-        xtalform_chains = [
-            _chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in _xassembly.chains]
-        for chain in st[0]:
-            if chain.name not in xtalform_chains:
-                continue
-            chain_to_assembly_transforms[
-                (
-                    dtag,
-                    chain.name,
-                    # version,
-                )] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
-                    st,
-                    chain.name,
-                    xtalforms[dataset_assignments[dtag]],
-                    assemblies,
-                    assembly_landmarks,
-            )
-    alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms, alignment_heirarchy.chain_to_assembly_transforms_to_dict)
-
     # Get neighbourhoods
     logger.info(f"Updating neighbourhoods")
     for dtag, dataset in new_datasets.items():
@@ -1230,6 +1208,35 @@ def _update(
         for atom_id in neighbourhood.atoms:
             if atom_id[2] == "CA":
                 print(atom_id)
+
+
+    # Get chain to assembly transforms
+    logger.info(f"Getting chain-to-assembly transforms...")
+    chain_to_assembly_transforms = {}
+    for dtag, st in structures.items():
+        xtalform_chains = [
+            _chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in _xassembly.chains]
+
+        dataset_chains = [_chain.name for _chain in st[0]]
+        dataset_ligand_chains = [_x[1] for _x in ligand_neighbourhoods if _x[0] == dtag]
+        for _chain in dataset_ligand_chains:
+            if _chain not in xtalform_chains:
+                raise Exception(f"A xtalform assignment error has occured. Dataset {dtag} has chain {_chain} in its chains {dataset_chains} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
+            chain_to_assembly_transforms[
+                (
+                    dtag,
+                    _chain,
+                    # version,
+                )] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
+                    st,
+                    _chain,
+                    xtalforms[dataset_assignments[dtag]],
+                    assemblies,
+                    assembly_landmarks,
+            )
+    logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
+    alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms, alignment_heirarchy.chain_to_assembly_transforms_to_dict)
+    logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
 
     # Update graph
     logger.info(f"Updating alignment graph...")
@@ -1408,6 +1415,7 @@ def _update(
                                 moving_ligand_id,
                                 reference_ligand_id,
                                 ligand_neighbourhoods[moving_ligand_id],
+                                [nid for nid in ligand_neighbourhoods if nid[0] == dtag],
                                 alignability_graph,
                                 ligand_neighbourhood_transforms,
                                 conformer_site_transforms,
