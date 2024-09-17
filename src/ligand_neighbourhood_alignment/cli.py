@@ -767,6 +767,7 @@ def _update_conformer_sites(
     # Otherwise create a new conformer site
     if not matched:
         residues = []
+        residues_aligned = []
         for lid in connected_component:
             st = structures[lid[0]]
             if lid != connected_component_id:
@@ -777,13 +778,17 @@ def _update_conformer_sites(
                     xtalforms[xtalform_assignments[lid[0]]],
                     assemblies
                 )
-
                 residues.append((
+                    atom_id[0],
+                    atom_id[1],
+                    st[0][atom_id[0]][atom_id[1]][0].name))
+                residues_aligned.append((
                     biochain,
                     atom_id[1],
                     st[0][atom_id[0]][atom_id[1]][0].name))
         conformer_site = dt.ConformerSite(
             [x for x in set(residues)],
+            [x for x in set(residues_aligned)],
             connected_component,
             # [x for x in connected_component][0]
             connected_component_id,
@@ -861,7 +866,10 @@ def _update_canonical_sites(
 
     # If not matched to any existing canonical site create a new one
     if not matched:
-        centroid_res = _get_centroid_res(conformer_site.residues, neighbourhoods[conformer_site.reference_ligand_id])
+        centroid_res = _get_centroid_res(
+            conformer_site.residues,
+            neighbourhoods[conformer_site.reference_ligand_id]
+        )
         canonical_site = dt.CanonicalSite(
             [
                 conformer_site_id,

@@ -693,10 +693,12 @@ class ConformerSite:
     def __init__(
             self,
             residues: list[tuple[str, str]],
+            residues_aligned: list[tuple[str, str]],
             members: list[tuple[str, str, str, str]],
             reference_ligand_id: tuple[str, str, str, str],
     ):
         self.residues: list[tuple[str, str]] = residues
+        self.residues_aligned = residues_aligned
         self.members: list[tuple[str, str, str, str]] = members
         self.reference_ligand_id: tuple[str, str, str, str] = reference_ligand_id
 
@@ -706,18 +708,24 @@ class ConformerSite:
         for res in dic["residues"]:
             chain, residue, name = res.split("/")
             residues.append((chain, residue, name))
+        residues_aligned = []
+        for res in dic["residues_aligned"]:
+            chain, residue, name = res.split("/")
+            residues.append((chain, residue, name))
+
         members = []
         for member in dic["members"]:
             dtag, chain, residue, version = member.split("/")
             members.append((dtag, chain, residue, version))
         ref_dtag, ref_chain, ref_residue, version = dic["reference_ligand_id"].split("/")
-        return ConformerSite(residues, members, (ref_dtag, ref_chain, ref_residue, version))
+        return ConformerSite(residues, residues_aligned, members, (ref_dtag, ref_chain, ref_residue, version))
 
     def to_dict(
             self,
     ):
         return {
             "residues": [x for x in sorted(["/".join(resid) for resid in self.residues])],
+            "residues_aligned": [x for x in sorted(["/".join(resid) for resid in self.residues_aligned])],
             "members": [x for x in sorted(["/".join(lid) for lid in self.members])],
             "reference_ligand_id": "/".join(self.reference_ligand_id),
         }
