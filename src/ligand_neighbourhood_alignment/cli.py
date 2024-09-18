@@ -920,7 +920,7 @@ def _crystalform_incremental_cluster(
         in observation_centroid_residues.items()
     }
 
-    # Identify current xtalform centre residues
+    # Identify current xtalform centre residues (for the considered canonical site)
     centre_residues_positions = {
         xtalform_site_id: centroid_ca_positions[xtalform_site_id]
         for xtalform_site_id in xtalform_sites
@@ -1011,7 +1011,7 @@ def _update_xtalform_sites(
     crystalform_observation_cluster_assignments = {
         xtalform_name: _crystalform_incremental_cluster(
             crystalform_observation_centroids[xtalform_name],
-            xtalform_sites,
+            {xid: xs for xid, xs in xtalform_sites.items() if (xs.xtalform_id == xtalform_name) & (xs.canonical_site_id == canonical_site_id)},
             neighbourhoods
         )
         for xtalform_name in crystalform_observations
