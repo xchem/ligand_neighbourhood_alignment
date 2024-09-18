@@ -927,10 +927,11 @@ def _crystalform_incremental_cluster(
     }
 
     # While observations remain to be assigned
-    observations_to_assign = []
-    assignments = {xtalform_site_id: [] for xtalform_site_id in xtalform_sites}
+    assignments = {xtalform_site_id: [_x for _x in xtalform_sites[xtalform_site_id].members] for xtalform_site_id in xtalform_sites}
+    assigned_observations = [observation_id for xtalform_site_id in assignments for observation_id in assignments[xtalform_site_id]]
+    observations_to_assign = [observation_id for observation_id in centroid_ca_positions]
+
     while len(observations_to_assign) > 0:
-        assigned_observations = []
         for observation_id in observations_to_assign:
             # Assign observations near current xtalform sites
             for xtalform_site_id, xtalform_site_pos in centre_residues_positions.items():
@@ -964,6 +965,7 @@ def _crystalform_incremental_cluster(
         # assigned_observations.append(new_centroid_observation_id)
         observations_to_assign = [_k for _k in observations_to_assign if _k not in assigned_observations]
 
+    raise Exception
     return assignments
 
 
