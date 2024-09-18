@@ -42,16 +42,3 @@ side-bar.
         +++
 
         Explanations of how the library works and why it works that way.
-
-    .. grid-item-card:: :material-regular:`menu_book;3em`
-
-        .. toctree::
-            :caption: Reference
-            :maxdepth: 1
-
-            reference/api
-            ../genindex
-
-        +++
-
-        Technical reference material including APIs and release notes.
