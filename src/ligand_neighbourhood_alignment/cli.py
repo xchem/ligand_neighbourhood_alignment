@@ -936,6 +936,7 @@ def _crystalform_incremental_cluster(
             # Assign observations near current xtalform sites
             for xtalform_site_id, xtalform_site_pos in centre_residues_positions.items():
                 if _get_dist(centroid_ca_positions[observation_id], xtalform_site_pos) < cutoff:
+
                     assignments[xtalform_site_id].append(observation_id)
                     assigned_observations.append(observation_id)
                     break
@@ -960,6 +961,7 @@ def _crystalform_incremental_cluster(
 
         # Add it to centre residue list
         centre_residues_positions[new_centroid_observation_id] = centroid_ca_positions[new_centroid_observation_id]
+        assignments[new_centroid_observation_id] = []
 
         # Update observations to assign
         # assigned_observations.append(new_centroid_observation_id)
