@@ -996,7 +996,7 @@ def _update_xtalform_sites(
     crystalform_observation_centroids = {
         xtalform_name: {
             member: _get_centroid_res(
-                conformer_sites[member].residues,
+                [_x for _x in set([(aid[0], aid[1]) for aid in neighbourhoods[member].atoms])],
                 neighbourhoods[member]
             )
             for member
