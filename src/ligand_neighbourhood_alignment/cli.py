@@ -1042,7 +1042,7 @@ def _update_xtalform_sites(
                 )
                 xtalform_sites[xtalform_site_id] = xtalform_site
 
-    raise Exception
+    # raise Exception
     #
     # matched = False
     # # for xtalform_site_id, xtalform_site in xtalform_sites.items():
