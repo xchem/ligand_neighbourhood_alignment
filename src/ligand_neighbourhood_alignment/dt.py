@@ -802,3 +802,6 @@ class XtalFormSite:
         dic["crystallographic_chain"] = self.crystallographic_chain
         dic["canonical_site_id"] = self.canonical_site_id
         return dic
+
+    def __repr__(self):
+        return self.to_dict()
