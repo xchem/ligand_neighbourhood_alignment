@@ -1036,9 +1036,7 @@ def _update_xtalform_sites(
                     xtalform_name,
                     centroid_residue[1],
                     canonical_site_id,
-                    [
-                        centroid_residue,
-                    ],
+                    asigned_observation_ids,
                 )
                 xtalform_sites[xtalform_site_id] = xtalform_site
 
