@@ -1018,20 +1018,26 @@ def _update_xtalform_sites(
         for xtalform_name in crystalform_observations
     }
 
-    # Create the xtalforms
+    # Create the xtalforms or assign new observations
     for xtalform_name in crystalform_observation_cluster_assignments:
-        for observation_id, assigned_centroid_residue in crystalform_observation_cluster_assignments[
+        for centroid_residue, asigned_observation_ids in crystalform_observation_cluster_assignments[
             xtalform_name].items():
-            if assigned_centroid_residue in xtalform_sites:
-                xtalform_sites[assigned_centroid_residue].members.append(observation_id)
+
+            # If the centroid is known, assign any new observations
+            if centroid_residue in xtalform_sites:
+                for asigned_observation_id in asigned_observation_ids:
+                    if asigned_observation_id not in xtalform_sites[centroid_residue].members:
+                        xtalform_sites[centroid_residue].members.append(asigned_observation_id)
+
+            # Otherwise create a new crystalform site
             else:
-                xtalform_site_id = "/".join(observation_id)
+                xtalform_site_id = "/".join(centroid_residue)
                 xtalform_site = dt.XtalFormSite(
                     xtalform_name,
-                    observation_id[1],
+                    centroid_residue[1],
                     canonical_site_id,
                     [
-                        observation_id,
+                        centroid_residue,
                     ],
                 )
                 xtalform_sites[xtalform_site_id] = xtalform_site
