@@ -967,7 +967,6 @@ def _crystalform_incremental_cluster(
         # assigned_observations.append(new_centroid_observation_id)
         observations_to_assign = [_k for _k in observations_to_assign if _k not in assigned_observations]
 
-    raise Exception
     return assignments
 
 
