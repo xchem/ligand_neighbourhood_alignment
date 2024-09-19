@@ -803,5 +803,5 @@ class XtalFormSite:
         dic["canonical_site_id"] = self.canonical_site_id
         return dic
 
-    def __repr__(self):
-        return self.to_dict()
+    def __rich_repr__(self):
+        yield self.to_dict()
