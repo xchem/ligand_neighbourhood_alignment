@@ -749,6 +749,9 @@ def _update_conformer_sites(
         connected_component: list[tuple[str, str, str, str]],
         neighbourhoods: dict[tuple[str, str, str, str], dt.Neighbourhood],
         structures,
+        assemblies,
+        xtalforms,
+        xtalform_assignments,
 ):
     matched = False
     # Check each old conformer site for overlap in membership, and if so update its members
@@ -764,12 +767,28 @@ def _update_conformer_sites(
     # Otherwise create a new conformer site
     if not matched:
         residues = []
+        residues_aligned = []
         for lid in connected_component:
             st = structures[lid[0]]
+            if lid != connected_component_id:
+                continue
             for atom_id in neighbourhoods[lid].atoms:
-                residues.append((atom_id[0], atom_id[1], st[0][atom_id[0]][atom_id[1]][0].name))
+                biochain = alignment_heirarchy._chain_to_biochain(
+                    atom_id[0],
+                    xtalforms[xtalform_assignments[lid[0]]],
+                    assemblies
+                )
+                residues.append((
+                    atom_id[0],
+                    atom_id[1],
+                    st[0][atom_id[0]][atom_id[1]][0].name))
+                residues_aligned.append((
+                    biochain,
+                    atom_id[1],
+                    st[0][atom_id[0]][atom_id[1]][0].name))
         conformer_site = dt.ConformerSite(
             [x for x in set(residues)],
+            [x for x in set(residues_aligned)],
             connected_component,
             # [x for x in connected_component][0]
             connected_component_id,
@@ -847,7 +866,10 @@ def _update_canonical_sites(
 
     # If not matched to any existing canonical site create a new one
     if not matched:
-        centroid_res = _get_centroid_res(conformer_site.residues, neighbourhoods[conformer_site.reference_ligand_id])
+        centroid_res = _get_centroid_res(
+            conformer_site.residues,
+            neighbourhoods[conformer_site.reference_ligand_id]
+        )
         canonical_site = dt.CanonicalSite(
             [
                 conformer_site_id,
@@ -875,48 +897,186 @@ def _save_canonical_sites(fs_model, canonical_sites: dict[str, dt.CanonicalSite]
         yaml.safe_dump(dic, f)
 
 
+def _get_dist(pos_1, pos_2):
+    return np.linalg.norm(
+        np.array([pos_1.x, pos_1.y, pos_1.z]) - np.array([pos_2.x, pos_2.y, pos_2.z])
+    )
+
+
+def _crystalform_incremental_cluster(
+        observation_centroid_residues,
+        xtalform_sites,
+        neighbourhoods,
+        cutoff=10.0
+):
+    # Check if each observation centroid is within 10A of an xtalform site centroid, and if so assign that dataset to it
+    # If not, select the remainer with the most members within 10A and form a new "site" from it
+    # Continue until all observations are assigned
+
+    # Get CA positions
+    centroid_ca_positions = {
+        observation_id: neighbourhoods[observation_id].atoms[(centroid_res[0], centroid_res[1], 'CA')]
+        for observation_id, centroid_res
+        in observation_centroid_residues.items()
+    }
+
+    # Identify current xtalform centre residues (for the considered canonical site)
+    centre_residues_positions = {
+        xtalform_site_id: centroid_ca_positions[xtalform_site_id]
+        for xtalform_site_id in xtalform_sites
+    }
+
+    # While observations remain to be assigned
+    assignments = {xtalform_site_id: [_x for _x in xtalform_sites[xtalform_site_id].members] for xtalform_site_id in xtalform_sites}
+    assigned_observations = [observation_id for xtalform_site_id in assignments for observation_id in assignments[xtalform_site_id]]
+    observations_to_assign = [observation_id for observation_id in centroid_ca_positions]
+
+    while len(observations_to_assign) > 0:
+        for observation_id in observations_to_assign:
+            # Assign observations near current xtalform sites
+            for xtalform_site_id, xtalform_site_pos in centre_residues_positions.items():
+                if _get_dist(centroid_ca_positions[observation_id], xtalform_site_pos) < cutoff:
+
+                    assignments[xtalform_site_id].append(observation_id)
+                    assigned_observations.append(observation_id)
+                    break
+
+        # Identify observation with most remaining items within 10A
+        remaining_observations = [_k for _k in observations_to_assign if _k not in assigned_observations]
+        if len(remaining_observations) == 0:
+            break
+        num_near = {
+            observation_id: len(
+                [
+                    other_observation_id
+                    for other_observation_id in remaining_observations
+                    if (_get_dist(centroid_ca_positions[observation_id],
+                                  centroid_ca_positions[other_observation_id]) < cutoff) & (
+                               observation_id != other_observation_id)
+                ]
+            )
+            for observation_id in remaining_observations
+        }
+        new_centroid_observation_id = min(num_near, key=lambda _x: num_near[_x])
+
+        # Add it to centre residue list
+        centre_residues_positions[new_centroid_observation_id] = centroid_ca_positions[new_centroid_observation_id]
+        assignments[new_centroid_observation_id] = []
+
+        # Update observations to assign
+        # assigned_observations.append(new_centroid_observation_id)
+        observations_to_assign = [_k for _k in observations_to_assign if _k not in assigned_observations]
+
+    return assignments
+
+
 def _update_xtalform_sites(
         xtalform_sites: dict[str, dt.XtalFormSite],
         canonical_site: dt.CanonicalSite,
         canonical_site_id: str,
         dataset_assignments: dict[str, str],
         conformer_sites: dict[str, dt.ConformerSite],
+        neighbourhoods
 ):
-    matched = False
-    # for xtalform_site_id, xtalform_site in xtalform_sites.items():
-    #     if xtalform_site.canonical_site_id == canonical_site_id:
-    #         for conformer_site_id in canonical_site.conformer_site_ids:
-    #             conformer_site = conformer_sites[conformer_site_id]
-    #             for member in conformer_site.members:
-    #                 if dataset_assignments[member[0]] == xtalform_site.xtalform_id:
-    #                     if member not in xtalform_site.members:
-    #                         xtalform_site.members.append(member)
+    # Iterate over Canonical Sites, collecting Observations that are in the same crystalform
+    # Then get their centroid CA positions,
+    # spatially cluster on these with a reasonably broad cutoff, including old items
+    # Then name these collections according to their centremost member
 
-    xtalforms_dict = {
-        (xtalform_site.canonical_site_id, xtalform_site.xtalform_id): xtalform_site_id
-        for xtalform_site_id, xtalform_site in xtalform_sites.items()
+    # Partition by canonical site and xtalform
+    crystalform_observations = {
+        xtalform_name: [
+            member
+            for conformer_site_id in canonical_site.conformer_site_ids
+            for member in conformer_sites[conformer_site_id].members
+            if dataset_assignments[member[0]] == xtalform_name
+        ]
+        for xtalform_name
+        in set(dataset_assignments.values())
     }
 
-    for conformer_site_id in canonical_site.conformer_site_ids:
-        conformer_site = conformer_sites[conformer_site_id]
-        for member in conformer_site.members:
-            assignment = dataset_assignments[member[0]]
-            if (canonical_site_id, assignment) in xtalforms_dict:
-                xtalform_site = xtalform_sites[xtalforms_dict[(canonical_site_id, assignment)]]
-                if member not in xtalform_site.members:
-                    xtalform_site.members.append(member)
+    # Get Observation centroid CA names and positions
+    crystalform_observation_centroids = {
+        xtalform_name: {
+            member: _get_centroid_res(
+                [_x for _x in set([(aid[0], aid[1]) for aid in neighbourhoods[member].atoms])],
+                neighbourhoods[member]
+            )
+            for member
+            in crystalform_observations[xtalform_name]
+        }
+        for xtalform_name in crystalform_observations
+    }
+
+    # Spatially cluster
+    crystalform_observation_cluster_assignments = {
+        xtalform_name: _crystalform_incremental_cluster(
+            crystalform_observation_centroids[xtalform_name],
+            {xid: xs for xid, xs in xtalform_sites.items() if (xs.xtalform_id == xtalform_name) & (xs.canonical_site_id == canonical_site_id)},
+            neighbourhoods
+        )
+        for xtalform_name in crystalform_observations
+    }
+
+    # Create the xtalforms or assign new observations
+    for xtalform_name in crystalform_observation_cluster_assignments:
+        for centroid_residue, asigned_observation_ids in crystalform_observation_cluster_assignments[
+            xtalform_name].items():
+
+            # If the centroid is known, assign any new observations
+            if centroid_residue in xtalform_sites:
+                for asigned_observation_id in asigned_observation_ids:
+                    if asigned_observation_id not in xtalform_sites[centroid_residue].members:
+                        xtalform_sites[centroid_residue].members.append(asigned_observation_id)
+
+            # Otherwise create a new crystalform site
             else:
-                xtalform_site_id = "/".join(member)
+                xtalform_site_id = "/".join(centroid_residue)
                 xtalform_site = dt.XtalFormSite(
-                    assignment,
-                    member[1],
+                    xtalform_name,
+                    centroid_residue[1],
                     canonical_site_id,
-                    [
-                        member,
-                    ],
+                    asigned_observation_ids,
                 )
                 xtalform_sites[xtalform_site_id] = xtalform_site
-                xtalforms_dict[(xtalform_site.canonical_site_id, xtalform_site.xtalform_id)] = xtalform_site_id
+
+    # raise Exception
+    #
+    # matched = False
+    # # for xtalform_site_id, xtalform_site in xtalform_sites.items():
+    # #     if xtalform_site.canonical_site_id == canonical_site_id:
+    # #         for conformer_site_id in canonical_site.conformer_site_ids:
+    # #             conformer_site = conformer_sites[conformer_site_id]
+    # #             for member in conformer_site.members:
+    # #                 if dataset_assignments[member[0]] == xtalform_site.xtalform_id:
+    # #                     if member not in xtalform_site.members:
+    # #                         xtalform_site.members.append(member)
+    #
+    # xtalforms_dict = {
+    #     (xtalform_site.canonical_site_id, xtalform_site.xtalform_id): xtalform_site_id
+    #     for xtalform_site_id, xtalform_site in xtalform_sites.items()
+    # }
+    #
+    # for conformer_site_id in canonical_site.conformer_site_ids:
+    #     conformer_site = conformer_sites[conformer_site_id]
+    #     for member in conformer_site.members:
+    #         assignment = dataset_assignments[member[0]]
+    #         if (canonical_site_id, assignment) in xtalforms_dict:
+    #             xtalform_site = xtalform_sites[xtalforms_dict[(canonical_site_id, assignment)]]
+    #             if member not in xtalform_site.members:
+    #                 xtalform_site.members.append(member)
+    #         else:
+    #             xtalform_site_id = "/".join(member)
+    #             xtalform_site = dt.XtalFormSite(
+    #                 assignment,
+    #                 member[1],
+    #                 canonical_site_id,
+    #                 [
+    #                     member,
+    #                 ],
+    #             )
+    #             xtalform_sites[xtalform_site_id] = xtalform_site
+    #             xtalforms_dict[(xtalform_site.canonical_site_id, xtalform_site.xtalform_id)] = xtalform_site_id
 
     # Otherwise if not matched create a new xtalform site
     ...
@@ -990,7 +1150,8 @@ def _update_fs_model(
                 if residue not in alignments[dtag][chain]:
                     alignments[dtag][chain][residue] = {}
                 if version not in alignments[dtag][chain][residue]:
-                    alignments[dtag][chain][residue][version] = dt.LigandNeighbourhoodOutput({}, {}, {}, {}, {}, {}, {}, {})
+                    alignments[dtag][chain][residue][version] = dt.LigandNeighbourhoodOutput({}, {}, {}, {}, {}, {}, {},
+                                                                                             {})
 
                 ligand_neighbourhood_output: dt.LigandNeighbourhoodOutput = alignments[dtag][chain][residue][version]
 
@@ -1148,7 +1309,7 @@ def _update(
         reference_structure_transforms: dict[tuple[str, str], dt.Transform],
         assembly_landmarks,
         assembly_transforms,
-    version,
+        version,
 ):
     logger.info(f"Version is: {version}")
     # Get the structures
@@ -1166,8 +1327,8 @@ def _update(
             continue
         as_st = alignment_heirarchy._get_assembly_st(assembly, structures[assembly.reference])
         assembly_landmarks[assembly_name] = alignment_heirarchy.structure_to_landmarks(as_st)
-    alignment_heirarchy.save_yaml(fs_model.assembly_landmarks, assembly_landmarks, alignment_heirarchy.assembly_landmarks_to_dict)
-
+    alignment_heirarchy.save_yaml(fs_model.assembly_landmarks, assembly_landmarks,
+                                  alignment_heirarchy.assembly_landmarks_to_dict)
 
     for assembly_name, assembly in assemblies.items():
         # Do not update if already have assembly transform!
@@ -1209,33 +1370,35 @@ def _update(
             if atom_id[2] == "CA":
                 print(atom_id)
 
-
     # Get chain to assembly transforms
     logger.info(f"Getting chain-to-assembly transforms...")
     chain_to_assembly_transforms = {}
     for dtag, st in structures.items():
         xtalform_chains = [
-            _chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in _xassembly.chains]
+            _chain for _xassembly in xtalforms[dataset_assignments[dtag]].assemblies.values() for _chain in
+            _xassembly.chains]
 
         dataset_chains = [_chain.name for _chain in st[0]]
         dataset_ligand_chains = [_x[1] for _x in ligand_neighbourhoods if _x[0] == dtag]
         for _chain in dataset_ligand_chains:
             if _chain not in xtalform_chains:
-                raise Exception(f"A xtalform assignment error has occured. Dataset {dtag} has chain {_chain} in its chains {dataset_chains} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
+                raise Exception(
+                    f"A xtalform assignment error has occured. Dataset {dtag} has chain {_chain} in its chains {dataset_chains} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
             chain_to_assembly_transforms[
                 (
                     dtag,
                     _chain,
                     # version,
                 )] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
-                    st,
-                    _chain,
-                    xtalforms[dataset_assignments[dtag]],
-                    assemblies,
-                    assembly_landmarks,
+                st,
+                _chain,
+                xtalforms[dataset_assignments[dtag]],
+                assemblies,
+                assembly_landmarks,
             )
     logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
-    alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms, alignment_heirarchy.chain_to_assembly_transforms_to_dict)
+    alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms,
+                                  alignment_heirarchy.chain_to_assembly_transforms_to_dict)
     logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
 
     # Update graph
@@ -1288,6 +1451,9 @@ def _update(
             connected_component,
             ligand_neighbourhoods,
             structures,
+            assemblies,
+            xtalforms,
+            dataset_assignments,
         )
     logger.info(f"Now have {len(conformer_sites)} conformer sites")
     for conformer_site_id, conformer_site in conformer_sites.items():
@@ -1316,6 +1482,7 @@ def _update(
             canonical_site_id,
             dataset_assignments,
             conformer_sites,
+            ligand_neighbourhoods
         )
     logger.info(f"Now have {len(xtalform_sites)} xtalform sites")
     _save_xtalform_sites(fs_model, xtalform_sites)
