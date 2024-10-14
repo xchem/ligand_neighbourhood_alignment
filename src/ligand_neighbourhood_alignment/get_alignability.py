@@ -168,6 +168,7 @@ def _update_ligand_neighbourhood_transforms(
     # connectivity = []
     # transform_ids = []
     # transforms = []
+    debug = False
 
     # For each other ligand neighbourhood, see if atoms match and then if so record the transform that relates
     # them and its inverse
