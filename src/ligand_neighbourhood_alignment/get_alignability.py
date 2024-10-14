@@ -114,6 +114,7 @@ def _match_cas(
 ):
 
     alignable_cas = []
+    alignable_ca_ids = []
     for ligand_1_atom_id, ligand_1_atom in ligand_1_neighbourhood.atoms.items():
         for ligand_2_atom_id, ligand_2_atom in ligand_2_neighbourhood.atoms.items():
             if ligand_1_atom_id[2] == "CA":
@@ -132,6 +133,7 @@ def _match_cas(
                             ),
                         )
                     )
+                    alignable_ca_ids.append((ligand_1_atom_id, ligand_2_atom_id))
 
     if len(alignable_cas) >= min(
         [min_alignable_atoms, len(ligand_1_neighbourhood.atoms), len(ligand_2_neighbourhood.atoms)]
@@ -146,6 +148,8 @@ def _match_cas(
         rmsd = sup.rmsd
         if debug:
             rprint(f'RMSD: {rmsd}')
+            for a1, a2 in alignable_ca_ids:
+                rprint(f"{a1} -> {a2}")
             raise Exception
         if rmsd < max_alignable_rmsd:
             return (
