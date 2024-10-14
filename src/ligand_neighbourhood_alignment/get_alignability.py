@@ -110,6 +110,7 @@ def _match_cas(
     ligand_2_neighbourhood: dt.Neighbourhood,
     min_alignable_atoms: int = 9,  # 10 splits A71, but some things almost identical end up in different clusters
     max_alignable_rmsd: float = 1.0,
+    debug=False
 ):
 
     alignable_cas = []
@@ -143,6 +144,9 @@ def _match_cas(
         inverse_transform = sup.transform.inverse()
 
         rmsd = sup.rmsd
+        if debug:
+            rprint(f'RMSD: {rmsd}')
+            raise Exception
         if rmsd < max_alignable_rmsd:
             return (
                 True,
@@ -178,7 +182,9 @@ def _update_ligand_neighbourhood_transforms(
         ligand_2_neighbourhood,
     ) in ligand_neighbourhoods.items():
         # See if atoms match - transform is frame 2 to frame 1
-        ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood)
+        if lid[0] == 'A71EV2A-x0207':
+            debug = True
+        ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood, debug=debug)
 
         if ca_match:
             # connectivities.append(1)
