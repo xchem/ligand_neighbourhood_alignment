@@ -183,7 +183,7 @@ def _update_ligand_neighbourhood_transforms(
         ligand_2_neighbourhood,
     ) in ligand_neighbourhoods.items():
         # See if atoms match - transform is frame 2 to frame 1
-        if lid[0] == 'A71EV2A-x0207':
+        if (lid[0] == 'A71EV2A-x0207') & (ligand_2_id[0] == 'A71EV2A-x0526'):
             debug = True
         ca_match, transform, inverse_transform = _match_cas(ligand_1_neighbourhood, ligand_2_neighbourhood, debug=debug)
 
