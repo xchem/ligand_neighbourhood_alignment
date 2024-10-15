@@ -1658,7 +1658,12 @@ def _update(
                     ) in ligand_neighbourhood_output.aligned_event_maps.items():
                         logger.info(f"Writing to: {aligned_event_map_path}")
                         # if not ( (fs_model.source_dir.parent / aligned_event_map_path).exists() | Path(aligned_event_map_path).exists()):
-                        if Path(aligned_event_map_path).is_relative_to(fs_model.source_dir):
+                        rel = True
+                        try:
+                            rel = Path(aligned_event_map_path).is_relative_to(fs_model.source_dir)
+                        except:
+                            rel = False
+                        if rel:
                             print(fs_model.source_dir.parent / aligned_event_map_path)
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
@@ -1686,9 +1691,6 @@ def _update(
                             aligned_structure = gemmi.read_structure(str(st_path))
                             aligned_res = aligned_structure[0][chain][str(residue)][0]
 
-                            # logger.info(datasets[dtag].ligand_binding_events[(dtag, chain, residue)].dtag)
-                            # logger.info(datasets[dtag].ligand_binding_events[(dtag, chain, residue)].chain)
-                            # logger.info(datasets[dtag].ligand_binding_events[(dtag, chain, residue)].residue)   # *
                             if (xmap_path != "None") and (xmap_path is not None):
                                 xmap = read_xmap(xmap_path)
 
