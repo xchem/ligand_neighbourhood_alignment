@@ -1883,6 +1883,10 @@ def _load_dataset_assignments(dataset_assignments_yaml):
 
         for dtag, assignment in dic.items():
             dataset_assignments[dtag] = assignment
+
+    print('assignment')
+    print(dataset_assignments)
+    raise Exception
     return dataset_assignments
 
 
