@@ -1310,7 +1310,6 @@ def _update(
         assembly_landmarks,
         assembly_transforms,
         version,
-        base_dir
 ):
     logger.info(f"Version is: {version}")
     # Get the structures
