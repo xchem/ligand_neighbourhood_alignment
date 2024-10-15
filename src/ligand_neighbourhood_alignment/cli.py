@@ -1657,7 +1657,8 @@ def _update(
                             aligned_event_map_path,
                     ) in ligand_neighbourhood_output.aligned_event_maps.items():
                         logger.info(f"Writing to: {aligned_event_map_path}")
-                        if not ( (fs_model.source_dir.parent / aligned_event_map_path).exists() | Path(aligned_event_map_path).exists()):
+                        # if not ( (fs_model.source_dir.parent / aligned_event_map_path).exists() | Path(aligned_event_map_path).exists()):
+                        if Path(aligned_event_map_path).is_relative_to(fs_model.source_dir):
                             print(fs_model.source_dir.parent / aligned_event_map_path)
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
