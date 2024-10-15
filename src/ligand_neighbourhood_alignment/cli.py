@@ -1678,6 +1678,9 @@ def _update(
                             xmap_path = datasets[dtag].ligand_binding_events[(dtag, chain, residue)].xmap
 
                             aligned_structure_path = ligand_neighbourhood_output.aligned_structures[canonical_site_id]
+                            st_path = fs_model.source_dir.parent / aligned_structure_path
+                            if not st_path.exists():
+                                st_path = aligned_structure_path
                             aligned_structure = gemmi.read_structure(str(aligned_structure_path))
                             aligned_res = aligned_structure[0][chain][str(residue)][0]
 
