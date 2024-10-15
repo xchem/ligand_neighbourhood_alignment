@@ -1564,6 +1564,15 @@ def _update(
                             canonical_site_id,
                             aligned_structure_path,
                     ) in ligand_neighbourhood_output.aligned_structures.items():
+                        print(aligned_structure_path)
+    for dtag, dataset_alignment_info in fs_model.alignments.items():
+        for chain, chain_alignment_info in dataset_alignment_info.items():
+            for residue, residue_alignment_info in chain_alignment_info.items():
+                for version, ligand_neighbourhood_output in residue_alignment_info.items():
+                    for (
+                            canonical_site_id,
+                            aligned_structure_path,
+                    ) in ligand_neighbourhood_output.aligned_structures.items():
                         if not Path(aligned_structure_path).exists():
                             # _update_aligned_structures()
                             _structure = structures[dtag].clone()
