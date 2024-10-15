@@ -922,7 +922,7 @@ def _crystalform_incremental_cluster(
 
     # Identify current xtalform centre residues (for the considered canonical site)
     centre_residues_positions = {
-        xtalform_site_id: centroid_ca_positions[xtalform_site_id.split('/')]
+        xtalform_site_id: centroid_ca_positions[tuple(xtalform_site_id.split('/'))]
         for xtalform_site_id in xtalform_sites
     }
 
