@@ -915,7 +915,7 @@ def _crystalform_incremental_cluster(
 
     # Get CA positions
     centroid_ca_positions = {
-        '/'.join(observation_id): neighbourhoods[observation_id].atoms[(centroid_res[0], centroid_res[1], 'CA')]
+        observation_id: neighbourhoods[observation_id].atoms[(centroid_res[0], centroid_res[1], 'CA')]
         for observation_id, centroid_res
         in observation_centroid_residues.items()
     }
