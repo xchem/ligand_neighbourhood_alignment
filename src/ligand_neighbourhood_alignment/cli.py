@@ -1343,13 +1343,14 @@ def _update(
 
     # Assign datasets
     for dtag, dataset in new_datasets.items():
-        dataset_assignments[dtag] = _assign_dataset(
+        new_dataset_assignments[dtag] = _assign_dataset(
             dataset,
             assemblies,
             xtalforms,
             structures[dtag],
             structures,
         )
+        dataset_assignments.update(dataset_assignments)
     _save_assignments(fs_model, dataset_assignments)
     logger.info(f"Assigned {len(dataset_assignments)} xtalform assignments to datasets!")
 
