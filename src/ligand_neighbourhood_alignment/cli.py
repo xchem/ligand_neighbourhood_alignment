@@ -1354,7 +1354,7 @@ def _update(
     print(len(dataset_assignments))
     dataset_assignments.update(new_dataset_assignments)
     print(len(dataset_assignments))
-
+    raise Exception
     _save_assignments(fs_model, dataset_assignments)
     logger.info(f"Assigned {len(dataset_assignments)} xtalform assignments to datasets!")
 
