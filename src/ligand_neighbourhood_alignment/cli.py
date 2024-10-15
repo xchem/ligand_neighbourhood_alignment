@@ -1565,6 +1565,7 @@ def _update(
                             aligned_structure_path,
                     ) in ligand_neighbourhood_output.aligned_structures.items():
                         print(aligned_structure_path)
+    exit()
     for dtag, dataset_alignment_info in fs_model.alignments.items():
         for chain, chain_alignment_info in dataset_alignment_info.items():
             for residue, residue_alignment_info in chain_alignment_info.items():
