@@ -1557,19 +1557,7 @@ def _update(
     #     for conformer_site_id, conformer_site in canonical_site.conformer_sites.items():
     #         for lid in conformer_site.ligand_ids:
 
-    for dtag, dataset_alignment_info in fs_model.alignments.items():
-        for chain, chain_alignment_info in dataset_alignment_info.items():
-            for residue, residue_alignment_info in chain_alignment_info.items():
-                for version, ligand_neighbourhood_output in residue_alignment_info.items():
-                    for (
-                            canonical_site_id,
-                            aligned_structure_path,
-                    ) in ligand_neighbourhood_output.aligned_structures.items():
-                        rprint(fs_model.source_dir / aligned_structure_path)
-                        rprint(Path(aligned_structure_path))
 
-    rprint(fs_model.source_dir)
-    exit()
     for dtag, dataset_alignment_info in fs_model.alignments.items():
         for chain, chain_alignment_info in dataset_alignment_info.items():
             for residue, residue_alignment_info in chain_alignment_info.items():
@@ -1578,7 +1566,7 @@ def _update(
                             canonical_site_id,
                             aligned_structure_path,
                     ) in ligand_neighbourhood_output.aligned_structures.items():
-                        if not ( (fs_model.source_dir / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
+                        if not ( (fs_model.source_dir.parent / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
                             # _update_aligned_structures()
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
@@ -1639,7 +1627,7 @@ def _update(
         for canonical_site_id, alignment_info in dataset_alignment_info.items():
             aligned_structure_path = alignment_info["aligned_structures"]
             logger.info(f"Outputting reference structure: {aligned_structure_path}")
-            if not ( (fs_model.source_dir / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
+            if not ( (fs_model.source_dir.parent / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
                 _structure = structures[dtag].clone()
                 _align_reference_structure(
                     _structure,
@@ -1669,7 +1657,7 @@ def _update(
                             aligned_event_map_path,
                     ) in ligand_neighbourhood_output.aligned_event_maps.items():
                         logger.info(f"Writing to: {aligned_event_map_path}")
-                        if not ( (fs_model.source_dir / aligned_event_map_path).exists() | Path(aligned_event_map_path).exists()):
+                        if not ( (fs_model.source_dir.parent / aligned_event_map_path).exists() | Path(aligned_event_map_path).exists()):
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
                             # Check for the matching conformer site
