@@ -1342,6 +1342,7 @@ def _update(
     alignment_heirarchy.save_yaml(fs_model.assembly_transforms, assembly_transforms, lambda x: x)
 
     # Assign datasets
+    new_dataset_assignments = {}
     for dtag, dataset in new_datasets.items():
         new_dataset_assignments[dtag] = _assign_dataset(
             dataset,
