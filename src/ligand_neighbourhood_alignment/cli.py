@@ -1658,6 +1658,7 @@ def _update(
                     ) in ligand_neighbourhood_output.aligned_event_maps.items():
                         logger.info(f"Writing to: {aligned_event_map_path}")
                         if not ( (fs_model.source_dir.parent / aligned_event_map_path).exists() | Path(aligned_event_map_path).exists()):
+                            print(fs_model.source_dir.parent / aligned_event_map_path)
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
                             # Check for the matching conformer site
