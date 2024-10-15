@@ -1351,6 +1351,7 @@ def _update(
             structures[dtag],
             structures,
         )
+    dataset_assignments.update(new_dataset_assignments)
 
     _save_assignments(fs_model, dataset_assignments)
     logger.info(f"Assigned {len(dataset_assignments)} xtalform assignments to datasets!")
