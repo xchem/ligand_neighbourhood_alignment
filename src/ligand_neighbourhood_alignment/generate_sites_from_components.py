@@ -338,7 +338,7 @@ def _update_reference_structure_transforms(
     reference_structure_xtalform = xtalforms[dataset_assignments[key[0]]]
     xtalform_chains = [chain for assembly in reference_structure_xtalform.assemblies.values() for chain in assembly.chains]
     reference_structure_biochains = {
-        chain.name: alignment_heirarchy._chain_to_biochain(chain.name, reference_structure_xtalform, assemblies)
+        chain: alignment_heirarchy._chain_to_biochain(chain.name, reference_structure_xtalform, assemblies)
         for chain
         in xtalform_chains
     }
