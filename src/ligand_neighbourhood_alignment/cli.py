@@ -1534,7 +1534,9 @@ def _update(
                     conformer_sites,
                     assemblies,
                     xtalforms,
-                    dataset_assignments
+                    dataset_assignments,
+                    xtalform_sites,
+                    canonical_site_id
                 )
     logger.info(f"Now have {len(reference_structure_transforms)} reference structure transforms")
     save_reference_structure_transforms(

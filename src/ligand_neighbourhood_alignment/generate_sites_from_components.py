@@ -322,13 +322,20 @@ def _update_reference_structure_transforms(
     conformer_sites: dict[str, dt.ConformerSite],
     assemblies,
     xtalforms,
-    dataset_assignments
+    dataset_assignments,
+    xtalform_sites,
+canonical_site_id
 ):
     # Get the biochain of the canonical site
     site_reference_ligand_id = conformer_sites[canonical_site.reference_conformer_site_id].reference_ligand_id
     site_reference_ligand_xtalform = xtalforms[dataset_assignments[site_reference_ligand_id[0]]]
+    for xsid, xtalform_site in xtalform_sites.items():
+        if xtalform_site.xtalform_id == dataset_assignments[site_reference_ligand_id[0]]:
+            if xtalform_site.canonical_site_id == canonical_site_id:
+                break
+    site_chain = xtalform_site.crystallographic_chain
     canonical_site_biochain = alignment_heirarchy._chain_to_biochain(
-        site_reference_ligand_id[1],
+        site_chain,
         site_reference_ligand_xtalform,
         assemblies
     )
