@@ -328,11 +328,12 @@ canonical_site_id
 ):
     # Get the biochain of the canonical site
     site_reference_ligand_id = conformer_sites[canonical_site.reference_conformer_site_id].reference_ligand_id
-    site_reference_ligand_xtalform = xtalforms[dataset_assignments[site_reference_ligand_id[0]]]
-    for xsid, xtalform_site in xtalform_sites.items():
-        if xtalform_site.xtalform_id == dataset_assignments[site_reference_ligand_id[0]]:
-            if xtalform_site.canonical_site_id == canonical_site_id:
-                break
+    site_reference_ligand_xtalform_id = dataset_assignments[site_reference_ligand_id[0]]
+    site_reference_ligand_xtalform = xtalforms[site_reference_ligand_xtalform_id]
+    for xsid, _xtalform_site in xtalform_sites.items():
+        if _xtalform_site.xtalform_id == site_reference_ligand_xtalform_id:
+            if _xtalform_site.canonical_site_id == canonical_site_id:
+                xtalform_site = _xtalform_site
     site_chain = xtalform_site.crystallographic_chain
     canonical_site_biochain = alignment_heirarchy._chain_to_biochain(
         site_chain,
