@@ -1039,7 +1039,7 @@ def _update_xtalform_sites(
                 xtalform_site_id = "/".join(centroid_residue)
                 xtalform_site = dt.XtalFormSite(
                     xtalform_name,
-                    crystalform_observation_centroids[xtalform_name][centroid_residue][1],
+                    crystalform_observation_centroids[xtalform_name][centroid_residue][0],
                     canonical_site_id,
                     asigned_observation_ids,
                 )
