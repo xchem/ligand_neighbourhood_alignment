@@ -1020,8 +1020,8 @@ def _update_xtalform_sites(
         for xtalform_name in crystalform_observations
     }
 
-    if debug:
-        raise Exception
+    # if debug:
+    #     raise Exception
 
     # Create the xtalforms or assign new observations
     for xtalform_name in crystalform_observation_cluster_assignments:
