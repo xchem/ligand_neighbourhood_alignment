@@ -331,8 +331,10 @@ canonical_site_id
     site_reference_ligand_xtalform_id = dataset_assignments[site_reference_ligand_id[0]]
     site_reference_ligand_xtalform = xtalforms[site_reference_ligand_xtalform_id]
     for xsid, _xtalform_site in xtalform_sites.items():
-        if _xtalform_site.xtalform_id == site_reference_ligand_xtalform_id:
-            if _xtalform_site.canonical_site_id == canonical_site_id:
+        _xtalform_id = _xtalform_site.xtalform_id
+        if _xtalform_id == site_reference_ligand_xtalform_id:
+            _xtalform_canonical_site_id = _xtalform_site.canonical_site_id
+            if _xtalform_canonical_site_id == canonical_site_id:
                 xtalform_site = _xtalform_site
     site_chain = xtalform_site.crystallographic_chain
     canonical_site_biochain = alignment_heirarchy._chain_to_biochain(
