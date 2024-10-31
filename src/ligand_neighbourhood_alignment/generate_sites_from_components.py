@@ -336,10 +336,11 @@ def _update_reference_structure_transforms(
     # Determine whether the biochain is shared, and if not skip
     reference_structure = structures[key[0]]
     reference_structure_xtalform = xtalforms[dataset_assignments[key[0]]]
+    xtalform_chains = [chain for assembly in reference_structure_xtalform.assemblies.values() for chain in assembly.chains]
     reference_structure_biochains = {
         chain.name: alignment_heirarchy._chain_to_biochain(chain.name, reference_structure_xtalform, assemblies)
         for chain
-        in reference_structure[0]
+        in xtalform_chains
     }
     reference_structure_biochains_inv = {v: k for k, v in reference_structure_biochains.items()}
 
