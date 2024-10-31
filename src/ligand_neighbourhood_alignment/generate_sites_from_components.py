@@ -324,7 +324,7 @@ def _update_reference_structure_transforms(
     xtalforms,
     dataset_assignments,
     xtalform_sites,
-canonical_site_id
+    canonical_site_id
 ):
     # Get the biochain of the canonical site
     site_reference_ligand_id = conformer_sites[canonical_site.reference_conformer_site_id].reference_ligand_id

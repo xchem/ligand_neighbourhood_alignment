@@ -976,7 +976,8 @@ def _update_xtalform_sites(
         canonical_site_id: str,
         dataset_assignments: dict[str, str],
         conformer_sites: dict[str, dt.ConformerSite],
-        neighbourhoods
+        neighbourhoods,
+        debug=False
 ):
     # Iterate over Canonical Sites, collecting Observations that are in the same crystalform
     # Then get their centroid CA positions,
@@ -1007,6 +1008,8 @@ def _update_xtalform_sites(
         }
         for xtalform_name in crystalform_observations
     }
+    if debug:
+        raise Exception
 
     # Spatially cluster
     crystalform_observation_cluster_assignments = {
@@ -1479,13 +1482,17 @@ def _update(
     for canonical_site_id, canonical_site in canonical_sites.items():
         # If canonical site in a xtalform site, replace with new data, otherwise
         # Check if residues match as usual, otherwise create a new canon site for it
+        debug = False
+        if canonical_site_id == 'LYSRSCPZ-x0426+A+805+1':
+            debug=True
         _update_xtalform_sites(
             xtalform_sites,
             canonical_site,
             canonical_site_id,
             dataset_assignments,
             conformer_sites,
-            ligand_neighbourhoods
+            ligand_neighbourhoods,
+            debug
         )
     logger.info(f"Now have {len(xtalform_sites)} xtalform sites")
     _save_xtalform_sites(fs_model, xtalform_sites)
