@@ -75,6 +75,7 @@ def _chain_to_biochain(chain_name, xtalform: dt.XtalForm, assemblies: dict[str, 
         for _j, _chain_name in enumerate(_xtal_assembly.chains):
             if chain_name == _chain_name:
                 return assemblies[_xtal_assembly.assembly].generators[_j].biomol
+    raise Exception(f'No biochain found for chain {chain_name}')
 
 
 StructureLandmarks = dict[tuple[str, str, str], tuple[float, float, float]]

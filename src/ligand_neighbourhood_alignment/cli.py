@@ -922,7 +922,7 @@ def _crystalform_incremental_cluster(
 
     # Identify current xtalform centre residues (for the considered canonical site)
     centre_residues_positions = {
-        xtalform_site_id: centroid_ca_positions[xtalform_site_id]
+        xtalform_site_id: centroid_ca_positions[tuple(xtalform_site_id.split('/'))]
         for xtalform_site_id in xtalform_sites
     }
 
@@ -976,7 +976,8 @@ def _update_xtalform_sites(
         canonical_site_id: str,
         dataset_assignments: dict[str, str],
         conformer_sites: dict[str, dt.ConformerSite],
-        neighbourhoods
+        neighbourhoods,
+        debug=False
 ):
     # Iterate over Canonical Sites, collecting Observations that are in the same crystalform
     # Then get their centroid CA positions,
@@ -1008,6 +1009,7 @@ def _update_xtalform_sites(
         for xtalform_name in crystalform_observations
     }
 
+
     # Spatially cluster
     crystalform_observation_cluster_assignments = {
         xtalform_name: _crystalform_incremental_cluster(
@@ -1017,6 +1019,9 @@ def _update_xtalform_sites(
         )
         for xtalform_name in crystalform_observations
     }
+
+    # if debug:
+    #     raise Exception
 
     # Create the xtalforms or assign new observations
     for xtalform_name in crystalform_observation_cluster_assignments:
@@ -1034,7 +1039,7 @@ def _update_xtalform_sites(
                 xtalform_site_id = "/".join(centroid_residue)
                 xtalform_site = dt.XtalFormSite(
                     xtalform_name,
-                    centroid_residue[1],
+                    crystalform_observation_centroids[xtalform_name][centroid_residue][0],
                     canonical_site_id,
                     asigned_observation_ids,
                 )
@@ -1342,14 +1347,17 @@ def _update(
     alignment_heirarchy.save_yaml(fs_model.assembly_transforms, assembly_transforms, lambda x: x)
 
     # Assign datasets
+    new_dataset_assignments = {}
     for dtag, dataset in new_datasets.items():
-        dataset_assignments[dtag] = _assign_dataset(
+        new_dataset_assignments[dtag] = _assign_dataset(
             dataset,
             assemblies,
             xtalforms,
             structures[dtag],
             structures,
         )
+    dataset_assignments.update(new_dataset_assignments)
+
     _save_assignments(fs_model, dataset_assignments)
     logger.info(f"Assigned {len(dataset_assignments)} xtalform assignments to datasets!")
 
@@ -1476,13 +1484,17 @@ def _update(
     for canonical_site_id, canonical_site in canonical_sites.items():
         # If canonical site in a xtalform site, replace with new data, otherwise
         # Check if residues match as usual, otherwise create a new canon site for it
+        debug = False
+        if canonical_site_id == 'LYSRSCPZ-x0426+A+805+1':
+            debug=True
         _update_xtalform_sites(
             xtalform_sites,
             canonical_site,
             canonical_site_id,
             dataset_assignments,
             conformer_sites,
-            ligand_neighbourhoods
+            ligand_neighbourhoods,
+            debug
         )
     logger.info(f"Now have {len(xtalform_sites)} xtalform sites")
     _save_xtalform_sites(fs_model, xtalform_sites)
@@ -1531,7 +1543,9 @@ def _update(
                     conformer_sites,
                     assemblies,
                     xtalforms,
-                    dataset_assignments
+                    dataset_assignments,
+                    xtalform_sites,
+                    canonical_site_id
                 )
     logger.info(f"Now have {len(reference_structure_transforms)} reference structure transforms")
     save_reference_structure_transforms(
@@ -1553,6 +1567,8 @@ def _update(
     # for canonical_site_id, canonical_site in canonical_sites.items():
     #     for conformer_site_id, conformer_site in canonical_site.conformer_sites.items():
     #         for lid in conformer_site.ligand_ids:
+
+
     for dtag, dataset_alignment_info in fs_model.alignments.items():
         for chain, chain_alignment_info in dataset_alignment_info.items():
             for residue, residue_alignment_info in chain_alignment_info.items():
@@ -1561,7 +1577,7 @@ def _update(
                             canonical_site_id,
                             aligned_structure_path,
                     ) in ligand_neighbourhood_output.aligned_structures.items():
-                        if not Path(aligned_structure_path).exists():
+                        if not ( (fs_model.source_dir.parent / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
                             # _update_aligned_structures()
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
@@ -1622,7 +1638,7 @@ def _update(
         for canonical_site_id, alignment_info in dataset_alignment_info.items():
             aligned_structure_path = alignment_info["aligned_structures"]
             logger.info(f"Outputting reference structure: {aligned_structure_path}")
-            if not Path(aligned_structure_path).exists():
+            if not ( (fs_model.source_dir.parent / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
                 _structure = structures[dtag].clone()
                 _align_reference_structure(
                     _structure,
@@ -1652,7 +1668,14 @@ def _update(
                             aligned_event_map_path,
                     ) in ligand_neighbourhood_output.aligned_event_maps.items():
                         logger.info(f"Writing to: {aligned_event_map_path}")
-                        if not Path(aligned_event_map_path).exists():
+                        # if not ( (fs_model.source_dir.parent / aligned_event_map_path).exists() | Path(aligned_event_map_path).exists()):
+                        rel = True
+                        try:
+                            rel = Path(aligned_event_map_path).is_relative_to(fs_model.source_dir)
+                        except:
+                            rel = False
+                        if rel:
+                            print(fs_model.source_dir.parent / aligned_event_map_path)
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
                             # Check for the matching conformer site
@@ -1673,12 +1696,12 @@ def _update(
                             xmap_path = datasets[dtag].ligand_binding_events[(dtag, chain, residue)].xmap
 
                             aligned_structure_path = ligand_neighbourhood_output.aligned_structures[canonical_site_id]
-                            aligned_structure = gemmi.read_structure(str(aligned_structure_path))
+                            st_path = fs_model.source_dir.parent / aligned_structure_path
+                            if not st_path.exists():
+                                st_path = aligned_structure_path
+                            aligned_structure = gemmi.read_structure(str(st_path))
                             aligned_res = aligned_structure[0][chain][str(residue)][0]
 
-                            # logger.info(datasets[dtag].ligand_binding_events[(dtag, chain, residue)].dtag)
-                            # logger.info(datasets[dtag].ligand_binding_events[(dtag, chain, residue)].chain)
-                            # logger.info(datasets[dtag].ligand_binding_events[(dtag, chain, residue)].residue)   # *
                             if (xmap_path != "None") and (xmap_path is not None):
                                 xmap = read_xmap(xmap_path)
 
@@ -1878,6 +1901,7 @@ def _load_dataset_assignments(dataset_assignments_yaml):
 
         for dtag, assignment in dic.items():
             dataset_assignments[dtag] = assignment
+
     return dataset_assignments
 
 
