@@ -1754,11 +1754,12 @@ def _update(
                                         (
                                             conformer_site.reference_ligand_id[0],
                                             # conformer_site.reference_ligand_id[1],
-                                            alignment_heirarchy._chain_to_xtalform_assembly(
-                                                # conformer_site.reference_ligand_id[1],
-                                                site_chain,
-                                                xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
-                                            )
+                                            # alignment_heirarchy._chain_to_xtalform_assembly(
+                                            #     # conformer_site.reference_ligand_id[1],
+                                            #     site_chain,
+                                            #     xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
+                                            # )
+                                            site_chain
                                             # conformer_site.reference_ligand_id[3]
                                         )
                                     ],
@@ -1797,11 +1798,12 @@ def _update(
                                         (
                                             conformer_site.reference_ligand_id[0],
                                             # conformer_site.reference_ligand_id[1],
-                                            alignment_heirarchy._chain_to_xtalform_assembly(
-                                                site_chain,
-                                                # conformer_site.reference_ligand_id[1],
-                                                xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
-                                            )
+                                            site_chain
+                                            # alignment_heirarchy._chain_to_xtalform_assembly(
+                                            #     site_chain,
+                                            #     # conformer_site.reference_ligand_id[1],
+                                            #     xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
+                                            # )
                                             # conformer_site.reference_ligand_id[3]
                                         )
                                     ],
