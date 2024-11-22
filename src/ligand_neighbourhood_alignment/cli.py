@@ -1605,9 +1605,10 @@ def _update(
                             site_reference_ligand_xtalform = xtalforms[site_reference_ligand_xtalform_id]
                             for xsid, _xtalform_site in xtalform_sites.items():
                                 _xtalform_id = _xtalform_site.xtalform_id
-                                if _xtalform_id == site_reference_ligand_xtalform_id:
-                                    _xtalform_canonical_site_id = _xtalform_site.canonical_site_id
-                                    if _xtalform_canonical_site_id == canonical_site_id:
+                                _xtalform_canonical_site_id = _xtalform_site.canonical_site_id
+                                if (_xtalform_id == site_reference_ligand_xtalform_id) \
+                                    & (_xtalform_canonical_site_id == canonical_site_id) \
+                                    & (site_reference_ligand_id in xtalform_site.members):
                                         xtalform_site = _xtalform_site
                             site_chain = xtalform_site.crystallographic_chain
 
