@@ -1596,8 +1596,11 @@ def _update(
                             print(aligned_structure_path)
 
                             # Get the site chain
-                            site_reference_ligand_id = conformer_sites[
-                                canonical_site.reference_conformer_site_id].reference_ligand_id
+                            site_chain = None
+                            xtalform_site = None
+                            # site_reference_ligand_id = conformer_sites[
+                            #     canonical_site.reference_conformer_site_id].reference_ligand_id
+                            site_reference_ligand_id = conformer_site.reference_ligand_id
                             site_reference_ligand_xtalform_id = dataset_assignments[site_reference_ligand_id[0]]
                             site_reference_ligand_xtalform = xtalforms[site_reference_ligand_xtalform_id]
                             for xsid, _xtalform_site in xtalform_sites.items():
@@ -1608,6 +1611,8 @@ def _update(
                                         xtalform_site = _xtalform_site
                             site_chain = xtalform_site.crystallographic_chain
 
+                            # Aligns to conformer site, then to the corresponding assembly, then from that assembly to
+                            # the global frame
                             _align_structure(
                                 _structure,
                                 moving_ligand_id,
