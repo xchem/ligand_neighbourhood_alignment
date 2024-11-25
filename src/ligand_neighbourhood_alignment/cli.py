@@ -1614,43 +1614,47 @@ def _update(
 
                             # Aligns to conformer site, then to the corresponding assembly, then from that assembly to
                             # the global frame
-                            _align_structure(
-                                _structure,
-                                moving_ligand_id,
-                                reference_ligand_id,
-                                ligand_neighbourhoods[moving_ligand_id],
-                                [nid for nid in ligand_neighbourhoods if nid[0] == dtag],
-                                alignability_graph,
-                                ligand_neighbourhood_transforms,
-                                conformer_site_transforms,
-                                # canonical_site_transforms,
-                                canonical_site_id,
-                                conformer_site_id,
-                                xtalforms[dataset_assignments[dtag]],
-                                aligned_structure_path,
-                                site_reference_xform=xtalforms[
-                                    dataset_assignments[conformer_site.reference_ligand_id[0]]],
-                                chain_to_assembly_transform=chain_to_assembly_transforms[
-                                    (
-                                        conformer_site.reference_ligand_id[0],
-                                        # conformer_site.reference_ligand_id[1],
-                                        site_chain
-                                        # conformer_site.reference_ligand_id[3]
-                                    )
-                                ],
-                                assembly_transform=assembly_transforms[
-                                    xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]].assemblies[
-                                        alignment_heirarchy._chain_to_xtalform_assembly(
+                            try:
+                                _align_structure(
+                                    _structure,
+                                    moving_ligand_id,
+                                    reference_ligand_id,
+                                    ligand_neighbourhoods[moving_ligand_id],
+                                    [nid for nid in ligand_neighbourhoods if nid[0] == dtag],
+                                    alignability_graph,
+                                    ligand_neighbourhood_transforms,
+                                    conformer_site_transforms,
+                                    # canonical_site_transforms,
+                                    canonical_site_id,
+                                    conformer_site_id,
+                                    xtalforms[dataset_assignments[dtag]],
+                                    aligned_structure_path,
+                                    site_reference_xform=xtalforms[
+                                        dataset_assignments[conformer_site.reference_ligand_id[0]]],
+                                    chain_to_assembly_transform=chain_to_assembly_transforms[
+                                        (
+                                            conformer_site.reference_ligand_id[0],
                                             # conformer_site.reference_ligand_id[1],
-                                            site_chain,
-                                            xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
+                                            site_chain
+                                            # conformer_site.reference_ligand_id[3]
                                         )
-                                    ].assembly
-                                ],
-                            )
+                                    ],
+                                    assembly_transform=assembly_transforms[
+                                        xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]].assemblies[
+                                            alignment_heirarchy._chain_to_xtalform_assembly(
+                                                # conformer_site.reference_ligand_id[1],
+                                                site_chain,
+                                                xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]]
+                                            )
+                                        ].assembly
+                                    ],
+                                    )
+
+                            except:
+                                logger.info(f"Failed to generate aligned structure {aligned_structure_path}")
+                                raise
                         else:
                             logger.info(f"Already output structure!")
-
     # Generate alignments of references to each canonical site
     # for canonical_site_id, canonical_site in canonical_sites.items():
     #     for dtag, reference_dataset in reference_datasets.items():
@@ -1726,16 +1730,20 @@ def _update(
                             aligned_res = aligned_structure[0][chain][str(residue)][0]
 
                             # Get the site chain
-                            site_reference_ligand_id = conformer_sites[
-                                canonical_site.reference_conformer_site_id].reference_ligand_id
+                            site_chain = None
+                            xtalform_site = None
+                            # site_reference_ligand_id = conformer_sites[
+                            #     canonical_site.reference_conformer_site_id].reference_ligand_id
+                            site_reference_ligand_id = conformer_site.reference_ligand_id
                             site_reference_ligand_xtalform_id = dataset_assignments[site_reference_ligand_id[0]]
                             site_reference_ligand_xtalform = xtalforms[site_reference_ligand_xtalform_id]
                             for xsid, _xtalform_site in xtalform_sites.items():
                                 _xtalform_id = _xtalform_site.xtalform_id
-                                if _xtalform_id == site_reference_ligand_xtalform_id:
-                                    _xtalform_canonical_site_id = _xtalform_site.canonical_site_id
-                                    if _xtalform_canonical_site_id == canonical_site_id:
-                                        xtalform_site = _xtalform_site
+                                _xtalform_canonical_site_id = _xtalform_site.canonical_site_id
+                                if (_xtalform_id == site_reference_ligand_xtalform_id) \
+                                        & (_xtalform_canonical_site_id == canonical_site_id) \
+                                        & (site_reference_ligand_id in _xtalform_site.members):
+                                    xtalform_site = _xtalform_site
                             site_chain = xtalform_site.crystallographic_chain
 
                             if (xmap_path != "None") and (xmap_path is not None):
