@@ -1319,6 +1319,12 @@ def _update(
     logger.info(f"Version is: {version}")
     # Get the structures
     structures: dict = _get_structures(datasets)
+    for dtag, structure in structures.items():
+        if dtag == '7gzs':
+            for model in structure:
+                for chain in model:
+                    print(chain.name)
+        raise Exception
 
     # Get the assembly alignment hierarchy
     hierarchy, biochain_priorities = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
