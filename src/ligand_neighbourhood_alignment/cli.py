@@ -492,16 +492,16 @@ def _assign_dataset(dataset, assemblies, xtalforms, structure, structures):
     )
 
     if (closest_xtalform_id is None) & (deltas is None):
-        logger.info(f"No reference in same spacegroup for")
+        logger.info(f"No reference in same spacegroup as: {dataset.dtag}")
         logger.info(f"Structure path is: {dataset.pdb}")
-        raise Exception()
+        raise Exception(f"No reference in same spacegroup as: {dataset.dtag}\nStructure path is: {dataset.pdb}")
 
     if np.any(deltas > 1.1) | np.any(deltas < 0.9):
-        logger.info(f"No reference for dataset")
+        logger.info(f"No reference for dataset: {dataset.dtag}")
         logger.info(f"Deltas to closest unit cell are: {deltas}")
         logger.info(f"Structure path is: {dataset.pdb}")
 
-        raise Exception()
+        raise Exception(f"No reference for dataset: {dataset.dtag}\nDeltas to closest unit cell are: {deltas}\nStructure path is: {dataset.pdb}")
 
     return closest_xtalform_id
 
