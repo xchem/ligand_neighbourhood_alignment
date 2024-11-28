@@ -441,7 +441,7 @@ def _get_structures(datasets):
             cell_lengths = np.max(pos_array, axis=0) - np.min(pos_array, axis=0)
 
             structure.cell = gemmi.UnitCell(cell_lengths[0], cell_lengths[1], cell_lengths[2], 90.0, 90.0, 90.0)
-        # print(structure.cell.a)
+        print(structure.cell.a)
         structures[dataset.dtag] = structure
 
     return structures
