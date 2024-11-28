@@ -438,7 +438,7 @@ def _get_structures(datasets):
                             poss.append((pos.x, pos.y, pos.z))
             pos_array = np.array(poss)
 
-            cell_lengths = np.max(pos_array) - np.min(pos_array)
+            cell_lengths = np.max(pos_array, axis=0) - np.min(pos_array, axis=0)
 
             structure.cell = gemmi.UnitCell(cell_lengths[0], cell_lengths[1], cell_lengths[2], 90.0, 90.0, 90.0)
         # print(structure.cell.a)
