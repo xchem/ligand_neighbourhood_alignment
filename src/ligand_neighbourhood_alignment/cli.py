@@ -427,7 +427,7 @@ def _get_structures(datasets):
         structure: gemmi.Structure = gemmi.read_structure(dataset.pdb)
         # if structure.cell.a == 0.0:
         cell = structure.cell
-        print(f'{cell.a}  {cell.b} {cell.c} {cell.alpha} {cella.beta} {cell.gamma}')
+        print(f'{cell.a}  {cell.b} {cell.c} {cell.alpha} {cell.beta} {cell.gamma}')
         raise Exception
         structures[dataset.dtag] = structure
 
