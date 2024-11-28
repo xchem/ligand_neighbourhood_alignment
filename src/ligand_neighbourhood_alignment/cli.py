@@ -501,7 +501,7 @@ def _assign_dataset(dataset, assemblies, xtalforms, structure, structures):
         logger.info(f"Deltas to closest unit cell are: {deltas}")
         logger.info(f"Structure path is: {dataset.pdb}")
 
-        raise Exception(f"No reference for dataset: {dataset.dtag}\nDeltas to closest unit cell are: {deltas}\nStructure path is: {dataset.pdb}")
+        raise Exception(f"No reference for dataset: {dataset.dtag}\nDeltas to closest unit cell in {closest_xtalform_id} are: {deltas}\nStructure path is: {dataset.pdb}")
 
     return closest_xtalform_id
 
