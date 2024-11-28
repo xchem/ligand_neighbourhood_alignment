@@ -427,9 +427,21 @@ def _get_structures(datasets):
         structure: gemmi.Structure = gemmi.read_structure(dataset.pdb)
         # if structure.cell.a == 0.0:
         cell = structure.cell
-        print(f'{cell.a}  {cell.b} {cell.c} {cell.alpha} {cell.beta} {cell.gamma}')
+
+        if cell.a == 1.0:
+            poss = []
+            for model in structure:
+                for chain in model:
+                    for residue in chain:
+                        for atom in residue:
+                            pos = atom.pos
+                            poss.append((pos.x, pos.y, pos.z))
+            pos_array = np.array(poss)
+
+            cell_lengths = np.max(pos_array) - np.min(pos_array)
+
+            structure.cell = gemmi.UnitCell(cell_lengths[0], cell_lengths[1], cell_lengths[2], 90.0, 90.0, 90.0)
         structures[dataset.dtag] = structure
-    raise Exception
 
     return structures
 
