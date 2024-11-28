@@ -1323,6 +1323,7 @@ def _update(
     print(f'Getting chains for 7gzs...')
     for dtag, structure in structures.items():
         if dtag == '7gzs':
+            print(f'Found dataset...')
             for model in structure:
                 for chain in model:
                     print(chain.name)
