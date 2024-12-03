@@ -446,6 +446,18 @@ def _get_structures(datasets):
 
     return structures
 
+def _get_dataset_protein_chains(structure):
+    protein_chains = []
+    for model in structure:
+        for chain in model:
+            protein = False
+            for residue in chain:
+                if residue.name not in constants.RESIDUE_NAMES:
+                    protein = True
+            if protein:
+                protein_chains.append(chain.name)
+
+    return protein_chains
 
 def _get_closest_xtalform(xtalforms: dict[str, dt.XtalForm], structure, structures):
     structure_spacegroup = structure.spacegroup_hm
@@ -458,7 +470,14 @@ def _get_closest_xtalform(xtalforms: dict[str, dt.XtalForm], structure, structur
         ref_spacegroup = ref_structure.spacegroup_hm
         ref_structure_cell = ref_structure.cell
 
+        # Check they are in the same spacegroup
         if ref_spacegroup != structure_spacegroup:
+            continue
+
+        # Check they have the same protein chains
+        xtalform_protein_chains = [_chain for xtalform_assembly in xtalform.assemblies.values() for _chain in xtalform_assembly.chains]
+        dataset_protein_chains = _get_dataset_protein_chains(structure)
+        if set(dataset_protein_chains) != set(xtalform_protein_chains):
             continue
 
         deltas = np.array(
