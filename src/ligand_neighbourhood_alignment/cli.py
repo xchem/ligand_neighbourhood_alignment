@@ -452,7 +452,7 @@ def _get_dataset_protein_chains(structure):
         for chain in model:
             protein = False
             for residue in chain:
-                if residue.name not in constants.RESIDUE_NAMES:
+                if residue.name in constants.RESIDUE_NAMES:
                     protein = True
             if protein:
                 protein_chains.append(chain.name)
