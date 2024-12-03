@@ -1412,18 +1412,22 @@ def _update(
             if _chain not in xtalform_chains:
                 raise Exception(
                     f"A xtalform assignment error has occured. Dataset {dtag} has chain {_chain} in its chains {dataset_chains} however its assigned xtalform {dataset_assignments[dtag]} has chain {xtalform_chains}")
-            chain_to_assembly_transforms[
-                (
-                    dtag,
+            try:
+                chain_to_assembly_transforms[
+                    (
+                        dtag,
+                        _chain,
+                        # version,
+                    )] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
+                    st,
                     _chain,
-                    # version,
-                )] = alignment_heirarchy._get_structure_chain_to_assembly_transform(
-                st,
-                _chain,
-                xtalforms[dataset_assignments[dtag]],
-                assemblies,
-                assembly_landmarks,
-            )
+                    xtalforms[dataset_assignments[dtag]],
+                    assemblies,
+                    assembly_landmarks,
+                )
+            except Exception as e:
+                print(f'Exception in dataset: {dtag}')
+                raise e
     logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
     alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms,
                                   alignment_heirarchy.chain_to_assembly_transforms_to_dict)

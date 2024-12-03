@@ -339,6 +339,9 @@ def _get_structure_chain_to_assembly_transform(
     #     rprint(f'Moving structure landmarks')
     #     rprint(mov_lm)
 
+    assert len(mov_lm) != 0, f"Should always have more than 0 move landmarks. Chain was {chain}, xtalform assembly name was {xtalform_assembly_name}"
+
+
     # Align the structure assembly to the reference assembly
     tr = _calculate_assembly_transform(
         ref=assembly_landmarks[xtalform_assembly.assembly],
