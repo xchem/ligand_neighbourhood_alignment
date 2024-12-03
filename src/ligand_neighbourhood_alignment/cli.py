@@ -1426,7 +1426,7 @@ def _update(
                     assembly_landmarks,
                 )
             except Exception as e:
-                print(f'Exception in dataset: {dtag}')
+                print(f'Exception in dataset: {dtag}, in xtalform {dataset_assignments[dtag]}')
                 raise e
     logger.info(f'Got {len(chain_to_assembly_transforms)} chain to assembly transforms')
     alignment_heirarchy.save_yaml(fs_model.chain_to_assembly, chain_to_assembly_transforms,
