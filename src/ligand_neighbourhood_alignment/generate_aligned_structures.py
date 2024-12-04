@@ -455,6 +455,11 @@ def _align_structure(
     shortest_path: list[tuple[str, str, str]] = nx.shortest_path(g, moving_ligand_id, reference_ligand_id)
     logger.debug(f"Shortest path: {shortest_path}")
 
+    print(f'Before modification')
+    for model in _structure:
+        for chain in model:
+            print(chain.name)
+
     # Drop chains without atoms in neighbourhood
     reduced_structure = _drop_non_binding_chains_and_symmetrize_waters(
         _structure,
@@ -500,6 +505,11 @@ def _align_structure(
     logger.debug(f"Transform from native frame to reference frame is: {gemmi_to_transform(running_transform)}")
 
     _structure = superpose_structure(running_transform, reduced_structure)
+
+    print(f'After modification')
+    for model in _structure:
+        for chain in model:
+            print(chain.name)
 
     # Write the fully aligned structure
     _structure.write_pdb(str(out_path))
