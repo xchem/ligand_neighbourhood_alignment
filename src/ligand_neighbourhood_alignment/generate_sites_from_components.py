@@ -383,7 +383,10 @@ def _update_reference_structure_transforms(
     except:
         for rid in canonical_site_residues:
             print(rid)
-            raise Exception
+        for membber in canonical_site.conformer_site_ids:
+            print(membber)
+        raise Exception
+
     reference_structure_transforms[key] = dt.Transform(
         transform.vec.tolist(),
         transform.mat.tolist(),
