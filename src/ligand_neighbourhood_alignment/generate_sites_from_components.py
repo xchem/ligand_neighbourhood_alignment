@@ -373,13 +373,17 @@ def _update_reference_structure_transforms(
             continue
         alignment_residues_ref_st.append((chain, res))
         alignment_residues_mov_st.append((core_chain, res))
-
-    transform = _get_transform_from_residues(
-        alignment_residues_ref_st,
-        structures[site_reference_ligand_id[0]],
-        reference_structure,
-        other_rs=alignment_residues_mov_st,
-    )
+    try:
+        transform = _get_transform_from_residues(
+            alignment_residues_ref_st,
+            structures[site_reference_ligand_id[0]],
+            reference_structure,
+            other_rs=alignment_residues_mov_st,
+        )
+    except:
+        for rid in canonical_site_residues:
+            print(rid)
+            raise Exception
     reference_structure_transforms[key] = dt.Transform(
         transform.vec.tolist(),
         transform.mat.tolist(),
