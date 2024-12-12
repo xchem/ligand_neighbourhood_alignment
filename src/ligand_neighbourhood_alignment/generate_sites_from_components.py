@@ -326,15 +326,15 @@ def _update_reference_structure_transforms(
     xtalform_sites,
     canonical_site_id
 ):
-    # Get the biochain of the canonical site
+    # # Get the biochain of the canonical site
     site_reference_ligand_id = conformer_sites[canonical_site.reference_conformer_site_id].reference_ligand_id
     site_reference_ligand_xtalform_id = dataset_assignments[site_reference_ligand_id[0]]
     site_reference_ligand_xtalform = xtalforms[site_reference_ligand_xtalform_id]
     for xsid, _xtalform_site in xtalform_sites.items():
         _xtalform_id = _xtalform_site.xtalform_id
-        if _xtalform_id == site_reference_ligand_xtalform_id:
-            _xtalform_canonical_site_id = _xtalform_site.canonical_site_id
-            if _xtalform_canonical_site_id == canonical_site_id:
+        if (_xtalform_id == site_reference_ligand_xtalform_id) &\
+            (_xtalform_site.canonical_site_id == canonical_site_id) & \
+                (site_reference_ligand_id in _xtalform_site.members):
                 xtalform_site = _xtalform_site
     site_chain = xtalform_site.crystallographic_chain
     canonical_site_biochain = alignment_heirarchy._chain_to_biochain(
@@ -342,6 +342,7 @@ def _update_reference_structure_transforms(
         site_reference_ligand_xtalform,
         assemblies
     )
+
 
     # Determine whether the biochain is shared, and if not skip
     reference_structure = structures[key[0]]
@@ -354,10 +355,21 @@ def _update_reference_structure_transforms(
     }
     reference_structure_biochains_inv = {v: k for k, v in reference_structure_biochains.items()}
 
-    if canonical_site_biochain not in reference_structure_biochains.values():
-        return None
+    # # Get the reference residues whose image is the canonical site biochain aligned residues
+    # alignment_residues_ref_st = []
+    # alignment_residues_mov_st = []
+    # for rid in canonical_site.residues:
+    #     chain, res = rid[0], rid[1]
+    #     biochain = alignment_heirarchy._chain_to_biochain(
+    #         chain,
+    #         site_reference_ligand_xtalform,
+    #         assemblies
+    #     )
+    #     reference_structure_chain = reference_structure_biochains_inv[biochain]
+    #     alignment_residues_ref_st.append((reference_structure_chain, res))
+    #     alignment_residues_mov_st.append((reference_structure_chain, res))
 
-    # Align the reference to the biochain reference using the canonical site residues
+    # # Align the reference to the biochain reference using the canonical site residues
     alignment_residues_ref_st = []
     alignment_residues_mov_st = []
     core_chain = reference_structure_biochains_inv[canonical_site_biochain]
@@ -373,13 +385,14 @@ def _update_reference_structure_transforms(
             continue
         alignment_residues_ref_st.append((chain, res))
         alignment_residues_mov_st.append((core_chain, res))
-
     transform = _get_transform_from_residues(
         alignment_residues_ref_st,
         structures[site_reference_ligand_id[0]],
         reference_structure,
         other_rs=alignment_residues_mov_st,
     )
+
+
     reference_structure_transforms[key] = dt.Transform(
         transform.vec.tolist(),
         transform.mat.tolist(),
