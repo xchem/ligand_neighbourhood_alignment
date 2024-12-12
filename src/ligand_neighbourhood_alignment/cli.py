@@ -534,7 +534,7 @@ def _save_assignments(fs_model: dt.FSModel, dataset_assignments: dict[str, str])
         yaml.safe_dump(dataset_assignments, f)
 
 
-def _generate_assembly(xtalform: dt.XtalForm, structure, assemblies: dict[str, dt.Assembly], pdb):
+def _generate_assembly(xtalform: dt.XtalForm, structure, assemblies: dict[str, dt.Assembly], pdb, dataset):
     full_st = structure.clone()
     chains_to_delete = []
     for model in full_st:
@@ -544,6 +544,7 @@ def _generate_assembly(xtalform: dt.XtalForm, structure, assemblies: dict[str, d
     for model_name, chain_name in chains_to_delete:
         del full_st[model_name][chain_name]
 
+    cloned_chains = []
     for xtalform_assembly_id, xtalform_assembly in xtalform.assemblies.items():
         assembly = assemblies[xtalform_assembly.assembly]
         # chains = xtalform_assembly.chains
@@ -553,6 +554,7 @@ def _generate_assembly(xtalform: dt.XtalForm, structure, assemblies: dict[str, d
                 xtalform_assembly.chains,
                 xtalform_assembly.transforms,
         ):
+            cloned_chains.append(_chain)
 
             # for generator in assembly.generators:
             #     op = gemmi.Op(generator.triplet)
@@ -578,6 +580,22 @@ def _generate_assembly(xtalform: dt.XtalForm, structure, assemblies: dict[str, d
                     atom.pos = gemmi.Position(*new_pos_orth)
             chain_clone.name = f"{_chain}~{_biogen.biomol}~{_transform}"
             full_st[0].add_chain(chain_clone)
+
+    # Catch any ligand only chains
+    for lbe in dataset.ligand_binding_events:
+        _chain = lbe[1]
+        if _chain not in cloned_chains:
+            op = gemmi.Op("x,y,z")
+            chain_clone = structure[0][_chain].clone()
+            for residue in chain_clone:
+                for atom in residue:
+                    atom_frac = structure.cell.fractionalize(atom.pos)
+                    new_pos_frac = op.apply_to_xyz([atom_frac.x, atom_frac.y, atom_frac.z])
+                    new_pos_orth = structure.cell.orthogonalize(gemmi.Fractional(*new_pos_frac))
+                    atom.pos = gemmi.Position(*new_pos_orth)
+            chain_clone.name = _chain.name
+            full_st[0].add_chain(chain_clone)
+            cloned_chains.append(_chain)
 
     chains = []
     num_chains = 0
@@ -632,7 +650,7 @@ def _get_dataset_neighbourhoods(
     logger.debug(f"{structure.cell}")
 
     # Get the rest of the assembly
-    assembly = _generate_assembly(xtalform, structure, assemblies, dataset.pdb)
+    assembly = _generate_assembly(xtalform, structure, assemblies, dataset.pdb, dataset)
 
     # Get the bound fragments
     fragments: dict[tuple[str, str, str, str], gemmi.Residue] = _get_structure_fragments(dataset, assembly, version)
