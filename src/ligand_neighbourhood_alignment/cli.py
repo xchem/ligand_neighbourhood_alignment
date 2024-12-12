@@ -593,7 +593,7 @@ def _generate_assembly(xtalform: dt.XtalForm, structure, assemblies: dict[str, d
                     new_pos_frac = op.apply_to_xyz([atom_frac.x, atom_frac.y, atom_frac.z])
                     new_pos_orth = structure.cell.orthogonalize(gemmi.Fractional(*new_pos_frac))
                     atom.pos = gemmi.Position(*new_pos_orth)
-            chain_clone.name = f"{_chain}~{_chain}~x,y,z}"
+            chain_clone.name = f"{_chain}~{_chain}~x,y,z"
             full_st[0].add_chain(chain_clone)
             cloned_chains.append(_chain)
 
