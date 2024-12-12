@@ -446,6 +446,7 @@ def _get_structures(datasets):
 
     return structures
 
+
 def _get_dataset_protein_chains(structure):
     protein_chains = []
     for model in structure:
@@ -458,6 +459,7 @@ def _get_dataset_protein_chains(structure):
                 protein_chains.append(chain.name)
 
     return protein_chains
+
 
 def _get_closest_xtalform(xtalforms: dict[str, dt.XtalForm], structure, structures):
     structure_spacegroup = structure.spacegroup_hm
@@ -475,7 +477,8 @@ def _get_closest_xtalform(xtalforms: dict[str, dt.XtalForm], structure, structur
             continue
 
         # Check they have the same protein chains
-        xtalform_protein_chains = [_chain for xtalform_assembly in xtalform.assemblies.values() for _chain in xtalform_assembly.chains]
+        xtalform_protein_chains = [_chain for xtalform_assembly in xtalform.assemblies.values() for _chain in
+                                   xtalform_assembly.chains]
         dataset_protein_chains = _get_dataset_protein_chains(structure)
         print(f'Xtalform chains: {set(xtalform_protein_chains)}')
         print(f'Dataseet chains: {set(dataset_protein_chains)}')
@@ -524,7 +527,8 @@ def _assign_dataset(dataset, assemblies, xtalforms, structure, structures):
         logger.info(f"Deltas to closest unit cell are: {deltas}")
         logger.info(f"Structure path is: {dataset.pdb}")
 
-        raise Exception(f"No reference for dataset: {dataset.dtag}\nDeltas to closest unit cell in {closest_xtalform_id} are: {deltas}\nStructure path is: {dataset.pdb}")
+        raise Exception(
+            f"No reference for dataset: {dataset.dtag}\nDeltas to closest unit cell in {closest_xtalform_id} are: {deltas}\nStructure path is: {dataset.pdb}")
 
     return closest_xtalform_id
 
@@ -985,8 +989,10 @@ def _crystalform_incremental_cluster(
     }
 
     # While observations remain to be assigned
-    assignments = {xtalform_site_id: [_x for _x in xtalform_sites[xtalform_site_id].members] for xtalform_site_id in xtalform_sites}
-    assigned_observations = [observation_id for xtalform_site_id in assignments for observation_id in assignments[xtalform_site_id]]
+    assignments = {xtalform_site_id: [_x for _x in xtalform_sites[xtalform_site_id].members] for xtalform_site_id in
+                   xtalform_sites}
+    assigned_observations = [observation_id for xtalform_site_id in assignments for observation_id in
+                             assignments[xtalform_site_id]]
     observations_to_assign = [observation_id for observation_id in centroid_ca_positions]
 
     while len(observations_to_assign) > 0:
@@ -994,7 +1000,6 @@ def _crystalform_incremental_cluster(
             # Assign observations near current xtalform sites
             for xtalform_site_id, xtalform_site_pos in centre_residues_positions.items():
                 if _get_dist(centroid_ca_positions[observation_id], xtalform_site_pos) < cutoff:
-
                     assignments[xtalform_site_id].append(observation_id)
                     assigned_observations.append(observation_id)
                     break
@@ -1067,12 +1072,12 @@ def _update_xtalform_sites(
         for xtalform_name in crystalform_observations
     }
 
-
     # Spatially cluster
     crystalform_observation_cluster_assignments = {
         xtalform_name: _crystalform_incremental_cluster(
             crystalform_observation_centroids[xtalform_name],
-            {xid: xs for xid, xs in xtalform_sites.items() if (xs.xtalform_id == xtalform_name) & (xs.canonical_site_id == canonical_site_id)},
+            {xid: xs for xid, xs in xtalform_sites.items() if
+             (xs.xtalform_id == xtalform_name) & (xs.canonical_site_id == canonical_site_id)},
             neighbourhoods
         )
         for xtalform_name in crystalform_observations
@@ -1378,7 +1383,6 @@ def _update(
     # Get the structures
     structures: dict = _get_structures(datasets)
 
-
     # Get the assembly alignment hierarchy
     hierarchy, biochain_priorities = alignment_heirarchy._derive_alignment_heirarchy(assemblies)
     alignment_heirarchy.save_yaml(fs_model.hierarchy, hierarchy, lambda x: x)
@@ -1551,7 +1555,7 @@ def _update(
         # Check if residues match as usual, otherwise create a new canon site for it
         debug = False
         if canonical_site_id == 'LYSRSCPZ-x0426+A+805+1':
-            debug=True
+            debug = True
         _update_xtalform_sites(
             xtalform_sites,
             canonical_site,
@@ -1641,7 +1645,8 @@ def _update(
                             canonical_site_id,
                             aligned_structure_path,
                     ) in ligand_neighbourhood_output.aligned_structures.items():
-                        if not ( (fs_model.source_dir.parent / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
+                        if not ((fs_model.source_dir.parent / aligned_structure_path).exists() | Path(
+                                aligned_structure_path).exists()):
                             # _update_aligned_structures()
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
@@ -1670,9 +1675,9 @@ def _update(
                                 _xtalform_id = _xtalform_site.xtalform_id
                                 _xtalform_canonical_site_id = _xtalform_site.canonical_site_id
                                 if (_xtalform_id == site_reference_ligand_xtalform_id) \
-                                    & (_xtalform_canonical_site_id == canonical_site_id) \
-                                    & (site_reference_ligand_id in _xtalform_site.members):
-                                        xtalform_site = _xtalform_site
+                                        & (_xtalform_canonical_site_id == canonical_site_id) \
+                                        & (site_reference_ligand_id in _xtalform_site.members):
+                                    xtalform_site = _xtalform_site
                             site_chain = xtalform_site.crystallographic_chain
 
                             # Aligns to conformer site, then to the corresponding assembly, then from that assembly to
@@ -1703,7 +1708,8 @@ def _update(
                                         )
                                     ],
                                     assembly_transform=assembly_transforms[
-                                        xtalforms[dataset_assignments[conformer_site.reference_ligand_id[0]]].assemblies[
+                                        xtalforms[
+                                            dataset_assignments[conformer_site.reference_ligand_id[0]]].assemblies[
                                             alignment_heirarchy._chain_to_xtalform_assembly(
                                                 # conformer_site.reference_ligand_id[1],
                                                 site_chain,
@@ -1711,7 +1717,8 @@ def _update(
                                             )
                                         ].assembly
                                     ],
-                                    )
+                                    xtalform_sites=xtalform_sites
+                                )
 
                             except:
                                 logger.info(f"Failed to generate aligned structure {aligned_structure_path}")
@@ -1728,7 +1735,8 @@ def _update(
         for canonical_site_id, alignment_info in dataset_alignment_info.items():
             aligned_structure_path = alignment_info["aligned_structures"]
             logger.info(f"Outputting reference structure: {aligned_structure_path}")
-            if not ( (fs_model.source_dir.parent / aligned_structure_path).exists() | Path(aligned_structure_path).exists()):
+            if not ((fs_model.source_dir.parent / aligned_structure_path).exists() | Path(
+                    aligned_structure_path).exists()):
                 _structure = structures[dtag].clone()
                 _align_reference_structure(
                     _structure,
