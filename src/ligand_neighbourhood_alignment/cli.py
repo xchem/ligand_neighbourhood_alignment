@@ -1589,12 +1589,16 @@ def _update(
         # for conformer_site_id in canonical_site.conformer_site_ids:
         # conformer_site = conformer_sites[conformer_site_id]
         # print(conformer_site)
-        _update_conformer_site_transforms(
-            conformer_site_transforms,
-            canonical_site,
-            conformer_sites,
-            structures,
-        )
+        try:
+            _update_conformer_site_transforms(
+                conformer_site_transforms,
+                canonical_site,
+                conformer_sites,
+                structures,
+            )
+        except Exception as e:
+
+            raise e
     logger.info(f"Now have {len(conformer_site_transforms)} conformer site transforms")
     for conformer_site_transform_id, conformer_site_transform in conformer_site_transforms.items():
         print(conformer_site_transform_id)
