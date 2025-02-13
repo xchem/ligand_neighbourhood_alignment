@@ -282,6 +282,7 @@ def _drop_non_binding_chains_and_symmetrize_waters(
         moving_ligand_id,
         dataset_ligand_neighbourhood_ids,
         xtalform,
+        xtalform_sites
 ):
     # Other Ligand IDs
     other_ligand_ids = [(lid[1], lid[2]) for lid in dataset_ligand_neighbourhood_ids if not ((lid[1] == moving_ligand_id[1]) & (lid[2] == moving_ligand_id[2]))]
@@ -299,7 +300,12 @@ def _drop_non_binding_chains_and_symmetrize_waters(
     }
 
     # Get the assembly the ligand is modelled as part of
-    lig_assembly = chain_assemblies[moving_ligand_id[1]]
+    for xsid, _xtalform_site in xtalform_sites.items():
+        _xtalform_id = _xtalform_site.xtalform_id
+        if moving_ligand_id in _xtalform_site.members:
+                xtalform_site = _xtalform_site
+    site_chain = xtalform_site.crystallographic_chain
+    lig_assembly = chain_assemblies[site_chain]
 
     # Determine which waters are bound near the ligand, and at what positions
     ns = gemmi.NeighborSearch(new_structure[0], new_structure.cell, 10).populate(include_h=False)
@@ -451,6 +457,7 @@ def _align_structure(
         site_reference_xform,
         chain_to_assembly_transform,
         assembly_transform,
+xtalform_sites
 ):
     shortest_path: list[tuple[str, str, str]] = nx.shortest_path(g, moving_ligand_id, reference_ligand_id)
     logger.debug(f"Shortest path: {shortest_path}")
@@ -466,7 +473,9 @@ def _align_structure(
         neighbourhood,
         moving_ligand_id,
         dataset_ligand_neighbourhood_ids,
-        xtalform)
+        xtalform,
+        xtalform_sites
+    )
 
     previous_ligand_id = moving_ligand_id
     running_transform = gemmi.Transform()
