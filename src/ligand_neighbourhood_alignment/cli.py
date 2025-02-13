@@ -1356,6 +1356,21 @@ def _update(
         assembly_transforms,
         version,
 ):
+    # Derive the alignment hierarchy
+    # Get transforms from assemblies to hierarchy
+    # Assign datasets xtalforms
+    # Get ligand neighbourhoods
+    # Get crystallographic chain to assembly transforms
+    # Get neighbourhood alignability graph
+    # Get graph connected components (conformer sites)
+    # Update conformer sites
+    # Update canonical sites
+    # Update xtalform sites
+    # Do structure alignments
+    # Do xtalform alignments
+
+
+
     logger.info(f"Version is: {version}")
     # Get the structures
     structures: dict = _get_structures(datasets)

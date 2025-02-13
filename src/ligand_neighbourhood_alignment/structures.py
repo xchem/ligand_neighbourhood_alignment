@@ -102,7 +102,7 @@ def _get_transform_from_residues(rs: list[tuple[str, str]], srs, ssrs, other_rs=
         for rid in rs:
             print(f"{rid[0]} {rid[1]}")
 
-        raise Exception()
+        raise Exception(acs)
 
     sup = gemmi.superpose_positions([x[0].pos for x in acs], [x[1].pos for x in acs])
 
