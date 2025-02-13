@@ -258,6 +258,9 @@ def _update_conformer_site_transforms(
                 )
 
             except Exception as e:
+                print(f'Conformer site Reference ligand dtag: {conformer_site.reference_ligand_id}')
+                print(f'Reference conformer reference site dtag: {ref_conformer_site.reference_ligand_id}')
+
                 raise e
 
 
