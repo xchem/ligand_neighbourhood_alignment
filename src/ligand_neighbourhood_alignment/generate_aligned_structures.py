@@ -286,8 +286,8 @@ def _drop_non_binding_chains_and_symmetrize_waters(
 ):
     # Other Ligand IDs
     other_ligand_ids = [(lid[1], lid[2]) for lid in dataset_ligand_neighbourhood_ids if not ((lid[1] == moving_ligand_id[1]) & (lid[2] == moving_ligand_id[2]))]
-    print(f'Other ligand ids...')
-    print(other_ligand_ids)
+    # print(f'Other ligand ids...')
+    # print(other_ligand_ids)
     # Get a copy of structure to edit
     new_structure = _structure.clone()
 
@@ -462,10 +462,10 @@ xtalform_sites
     shortest_path: list[tuple[str, str, str]] = nx.shortest_path(g, moving_ligand_id, reference_ligand_id)
     logger.debug(f"Shortest path: {shortest_path}")
 
-    print(f'Before modification')
-    for model in _structure:
-        for chain in model:
-            print(chain.name)
+    # print(f'Before modification')
+    # for model in _structure:
+    #     for chain in model:
+    #         print(chain.name)
 
     # Drop chains without atoms in neighbourhood
     reduced_structure = _drop_non_binding_chains_and_symmetrize_waters(
@@ -515,10 +515,10 @@ xtalform_sites
 
     _structure = superpose_structure(running_transform, reduced_structure)
 
-    print(f'After modification')
-    for model in _structure:
-        for chain in model:
-            print(chain.name)
+    # print(f'After modification')
+    # for model in _structure:
+    #     for chain in model:
+    #         print(chain.name)
 
     # Write the fully aligned structure
     _structure.write_pdb(str(out_path))

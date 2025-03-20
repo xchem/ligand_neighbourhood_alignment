@@ -16,7 +16,7 @@ from loguru import logger
 from rich import print as rprint
 
 logger.remove()  # for someone not familiar with the lib, whats going on here?
-logger.add(sys.stdout, level="INFO")
+logger.add(sys.stdout, level="WARNING")
 from rich import print
 
 from ligand_neighbourhood_alignment import constants
@@ -441,7 +441,7 @@ def _get_structures(datasets):
             cell_lengths = np.max(pos_array, axis=0) - np.min(pos_array, axis=0)
 
             structure.cell = gemmi.UnitCell(cell_lengths[0], cell_lengths[1], cell_lengths[2], 90.0, 90.0, 90.0)
-        print(structure.cell.a)
+        # print(structure.cell.a)
         structures[dataset.dtag] = structure
 
     return structures
@@ -480,9 +480,9 @@ def _get_closest_xtalform(xtalforms: dict[str, dt.XtalForm], structure, structur
         xtalform_protein_chains = [_chain for xtalform_assembly in xtalform.assemblies.values() for _chain in
                                    xtalform_assembly.chains]
         dataset_protein_chains = _get_dataset_protein_chains(structure)
-        print(f'Xtalform chains: {set(xtalform_protein_chains)}')
-        print(f'Dataseet chains: {set(dataset_protein_chains)}')
-        print(set(dataset_protein_chains) == set(xtalform_protein_chains))
+        # print(f'Xtalform chains: {set(xtalform_protein_chains)}')
+        # print(f'Dataseet chains: {set(dataset_protein_chains)}')
+        # print(set(dataset_protein_chains) == set(xtalform_protein_chains))
 
         if set(dataset_protein_chains) != set(xtalform_protein_chains):
             continue
@@ -609,7 +609,7 @@ def _generate_assembly(xtalform: dt.XtalForm, structure, assemblies: dict[str, d
             chains.append(chain.name)
     logger.debug(f"Generated {num_chains} assembly chains")
     logger.debug(f"Chain names are: {[x.name for x in full_st[0]]}")
-    print(chains)
+    # print(chains)
 
     return full_st
 
@@ -789,7 +789,7 @@ def _get_connected_components(alignability_graph, clusters, max_path_length=2):
         if x in used:
             continue
         clusters[x] = []
-        print(f"f{x} : {degrees[x]}")
+        # print(f"f{x} : {degrees[x]}")
 
         # for n in G.neighbors(x):
         # used.append(n)
@@ -1435,11 +1435,11 @@ def _update(
     logger.info(f"Found {len(ligand_neighbourhoods)} ligand neighbourhoods!")
     _save_neighbourhoods(fs_model, ligand_neighbourhoods)
 
-    for nid, neighbourhood in ligand_neighbourhoods.items():
-        print(nid)
-        for atom_id in neighbourhood.atoms:
-            if atom_id[2] == "CA":
-                print(atom_id)
+    # for nid, neighbourhood in ligand_neighbourhoods.items():
+    #     print(nid)
+    #     for atom_id in neighbourhood.atoms:
+    #         if atom_id[2] == "CA":
+    #             print(atom_id)
 
     # Get chain to assembly transforms
     logger.info(f"Getting chain-to-assembly transforms...")
@@ -1492,7 +1492,7 @@ def _update(
         )
 
     logger.info(f"Now have {len(ligand_neighbourhood_transforms)} alignments between neighbourhoods")
-    print(ligand_neighbourhood_transforms)
+    # print(ligand_neighbourhood_transforms)
     _save_ligand_neighbourhood_transforms(fs_model, ligand_neighbourhood_transforms)
 
     # Update the alignment graph
@@ -1505,9 +1505,9 @@ def _update(
         ligand_neighbourhood_transforms,
     )
     logger.info(f"Now have {len(alignability_graph.nodes)} nodes")
-    print(sorted(alignability_graph.nodes, key=lambda x: x[0]))
+    # print(sorted(alignability_graph.nodes, key=lambda x: x[0]))
     logger.info(f"Now have {len(alignability_graph.edges)} edges")
-    print(alignability_graph.edges)
+    # print(alignability_graph.edges)
     _save_graph(fs_model, alignability_graph)
 
     # Update conformer sites
@@ -1533,9 +1533,9 @@ def _update(
             dataset_assignments,
         )
     logger.info(f"Now have {len(conformer_sites)} conformer sites")
-    for conformer_site_id, conformer_site in conformer_sites.items():
-        print(conformer_site_id)
-        print(conformer_site.members)
+    # for conformer_site_id, conformer_site in conformer_sites.items():
+    #     print(conformer_site_id)
+    #     print(conformer_site.members)
     _save_conformer_sites(fs_model, conformer_sites)
 
     # Update canonical sites
@@ -1581,8 +1581,8 @@ def _update(
             structures,
         )
     logger.info(f"Now have {len(conformer_site_transforms)} conformer site transforms")
-    for conformer_site_transform_id, conformer_site_transform in conformer_site_transforms.items():
-        print(conformer_site_transform_id)
+    # for conformer_site_transform_id, conformer_site_transform in conformer_site_transforms.items():
+    #     print(conformer_site_transform_id)
     _save_conformer_site_transforms(fs_model, conformer_site_transforms)
 
     # Get canonical site tranforms
@@ -1661,7 +1661,7 @@ def _update(
                                 continue
                             moving_ligand_id = (dtag, chain, residue, version)
                             reference_ligand_id = conformer_site.reference_ligand_id
-                            print(aligned_structure_path)
+                            # print(aligned_structure_path)
 
                             # Get the site chain
                             site_chain = None
@@ -1773,7 +1773,7 @@ def _update(
                         except:
                             rel = False
                         if rel:
-                            print(fs_model.source_dir.parent / aligned_event_map_path)
+                            # print(fs_model.source_dir.parent / aligned_event_map_path)
                             _structure = structures[dtag].clone()
                             canonical_site = canonical_sites[canonical_site_id]
                             # Check for the matching conformer site
@@ -1945,6 +1945,7 @@ def _update(
 
 
 def _load_assemblies(assemblies_file, new_assemblies_yaml):
+
     assemblies = {}
 
     if assemblies_file.exists():
@@ -1971,6 +1972,7 @@ def _load_assemblies(assemblies_file, new_assemblies_yaml):
 
 
 def _load_xtalforms(xtalforms_file, new_xtalforms_yaml):
+
     xtalforms = {}
 
     if xtalforms_file.exists():
@@ -2023,7 +2025,9 @@ def _load_xtalforms_and_assemblies(xtalforms_file, new_xtalforms_yaml):
     return xtalforms
 
 
-def _load_dataset_assignments(dataset_assignments_yaml):
+def _load_dataset_assignments(dataset_assignments_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not dataset_assignments_yaml.is_file():
+        raise ValueError("File " + str(dataset_assignments_yaml) + " does not exist")
     dataset_assignments = {}
     if dataset_assignments_yaml.exists():
 
@@ -2036,7 +2040,9 @@ def _load_dataset_assignments(dataset_assignments_yaml):
     return dataset_assignments
 
 
-def _load_ligand_neighbourhoods(ligand_neighbourhoods_yaml):
+def _load_ligand_neighbourhoods(ligand_neighbourhoods_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not ligand_neighbourhoods_yaml.is_file():
+        raise ValueError("File " + str(ligand_neighbourhoods_yaml) + " does not exist")
     ligand_neighbourhoods: dict[tuple[str, str, str], dt.Neighbourhood] = {}
 
     if ligand_neighbourhoods_yaml.exists():
@@ -2053,7 +2059,9 @@ def _load_ligand_neighbourhoods(ligand_neighbourhoods_yaml):
     return ligand_neighbourhoods
 
 
-def _load_alignability_graph(alignability_graph):
+def _load_alignability_graph(alignability_graph, fail_if_not_found=False):
+    if fail_if_not_found and not alignability_graph.is_file():
+        raise ValueError("File " + str(alignability_graph) + " does not exist")
     if alignability_graph.exists():
         g_initial = nx.read_gml(
             str(alignability_graph),
@@ -2068,7 +2076,9 @@ def _load_alignability_graph(alignability_graph):
         return nx.Graph()
 
 
-def _load_connected_components(connected_components_yaml):
+def _load_connected_components(connected_components_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not connected_components_yaml.is_file():
+        raise ValueError("File " + str(connected_components_yaml) + " does not exist")
     connected_components = {}
 
     if connected_components_yaml.exists():
@@ -2087,7 +2097,9 @@ def _load_connected_components(connected_components_yaml):
     return connected_components
 
 
-def _load_ligand_neighbourhood_transforms(ligand_neighbourhood_transforms_yaml):
+def _load_ligand_neighbourhood_transforms(ligand_neighbourhood_transforms_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not ligand_neighbourhood_transforms_yaml.is_file():
+        raise ValueError("File " + str(ligand_neighbourhood_transforms_yaml) + " does not exist")
     ligand_neighbourhood_transforms = {}
     if ligand_neighbourhood_transforms_yaml.exists():
 
@@ -2095,7 +2107,7 @@ def _load_ligand_neighbourhood_transforms(ligand_neighbourhood_transforms_yaml):
             dic = yaml.safe_load(f)
 
         for ligand_transform_key, ligand_transform in dic.items():
-            print(ligand_transform_key)
+            # print(ligand_transform_key)
             ligand_1_id, ligand_2_id = ligand_transform_key.split("~")
             dtag_1, chain_1, residue_1, version_1 = ligand_1_id.split("/")
             dtag_2, chain_2, residue_2, version_2 = ligand_2_id.split("/")
@@ -2106,7 +2118,9 @@ def _load_ligand_neighbourhood_transforms(ligand_neighbourhood_transforms_yaml):
     return ligand_neighbourhood_transforms
 
 
-def _load_conformer_sites(conformer_sites_yaml):
+def _load_conformer_sites(conformer_sites_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not conformer_sites_yaml.is_file():
+        raise ValueError("File " + str(conformer_sites_yaml) + " does not exist")
     conformer_sites = {}
     if conformer_sites_yaml.exists():
         with open(conformer_sites_yaml, "r") as f:
@@ -2117,7 +2131,9 @@ def _load_conformer_sites(conformer_sites_yaml):
     return conformer_sites
 
 
-def _load_conformer_site_transforms(conformer_site_transforms_yaml):
+def _load_conformer_site_transforms(conformer_site_transforms_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not conformer_site_transforms_yaml.is_file():
+        raise ValueError("File " + str(conformer_site_transforms_yaml) + " does not exist")
     conformer_site_transforms = {}
     if conformer_site_transforms_yaml.exists():
         with open(conformer_site_transforms_yaml, "r") as f:
@@ -2133,7 +2149,9 @@ def _load_conformer_site_transforms(conformer_site_transforms_yaml):
     return conformer_site_transforms
 
 
-def _load_canonical_sites(canonical_sites_yaml):
+def _load_canonical_sites(canonical_sites_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not canonical_sites_yaml.is_file():
+        raise ValueError("File " + str(canonical_sites_yaml) + " does not exist")
     canonical_sites = {}
     if canonical_sites_yaml.exists():
         with open(canonical_sites_yaml, "r") as f:
@@ -2146,7 +2164,9 @@ def _load_canonical_sites(canonical_sites_yaml):
     return canonical_sites
 
 
-def _load_canonical_site_transforms(canonical_site_transforms_yaml):
+def _load_canonical_site_transforms(canonical_site_transforms_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not canonical_site_transforms_yaml.is_file():
+        raise ValueError("File " + str(canonical_site_transforms_yaml) + " does not exist")
     canonical_site_transforms = {}
     if canonical_site_transforms_yaml.exists():
         with open(canonical_site_transforms_yaml, "r") as f:
@@ -2158,7 +2178,9 @@ def _load_canonical_site_transforms(canonical_site_transforms_yaml):
     return canonical_site_transforms
 
 
-def _load_xtalform_sites(xtalform_sites_yaml):
+def _load_xtalform_sites(xtalform_sites_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not xtalform_sites_yaml.is_file():
+        raise ValueError("File " + str(xtalform_sites_yaml) + " does not exist")
     xtalform_sites = {}
     if xtalform_sites_yaml.exists():
         with open(xtalform_sites_yaml, "r") as f:
@@ -2170,7 +2192,9 @@ def _load_xtalform_sites(xtalform_sites_yaml):
     return xtalform_sites
 
 
-def _load_reference_stucture_transforms(reference_structure_transforms_yaml):
+def _load_reference_stucture_transforms(reference_structure_transforms_yaml, fail_if_not_found=False):
+    if fail_if_not_found and not reference_structure_transforms_yaml.is_file():
+        raise ValueError("File " + str(reference_structure_transforms_yaml) + " does not exist")
     reference_structure_transforms = {}
     if reference_structure_transforms_yaml.exists():
         with open(reference_structure_transforms_yaml, "r") as f:
@@ -2241,9 +2265,9 @@ class CLI:
         )
 
         datasets, reference_datasets, new_datasets = source_data_model.get_datasets()
-        print(datasets)
-        print(reference_datasets)
-        print(new_datasets)
+        # print(datasets)
+        # print(reference_datasets)
+        # print(new_datasets)
 
         # Get assemblies
         logger.info(f"Getting assemblies...")
@@ -2257,7 +2281,7 @@ class CLI:
         #     print(assembly)
         #     for gen in assembly.generators:
         #         print([gen.chain, gen.reference_chain, gen.triplet])
-        print(assemblies)
+        # print(assemblies)
 
         # Get xtalforms
         logger.info(f"Getting xtalforms...")
@@ -2272,7 +2296,7 @@ class CLI:
         #     for ass, xtalform_ass in xtalform.assemblies.items():
         #         for chn, trns in zip(xtalform_ass.chains, xtalform_ass.transforms):
         #             print([chn, trns])
-        print(xtalforms)
+        # print(xtalforms)
 
         # Get the dataset assignments
         logger.info(f"Getting dataset assignments...")
@@ -2280,7 +2304,7 @@ class CLI:
             dataset_assignments = _load_dataset_assignments(Path(source_fs_model.dataset_assignments))
         else:
             dataset_assignments = _load_dataset_assignments(Path(fs_model.dataset_assignments))
-        print(dataset_assignments)
+        # print(dataset_assignments)
 
         # Get Ligand neighbourhoods
         logger.info(f"Getting ligand neighbourhoods...")
@@ -2290,7 +2314,7 @@ class CLI:
             )
         else:
             ligand_neighbourhoods = _load_ligand_neighbourhoods(fs_model.ligand_neighbourhoods)
-        print(ligand_neighbourhoods)
+        # print(ligand_neighbourhoods)
 
         # Get alignability graph
         logger.info(f"Getting alignability graph...")

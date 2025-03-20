@@ -531,7 +531,7 @@ def resample_xmap(new_xmap, aligned_res):
     cell = get_cell(frame_array, step)
     # print(cell)
 
-    print(f'Origin for xmap is now: {frame_lower_bound}')
+    # print(f'Origin for xmap is now: {frame_lower_bound}')
 
     new_map = get_new_map(cell, frame_array, frame_lower_bound, step)
     return new_map
@@ -643,7 +643,7 @@ def read_xmap_from_mtz(
             grid = mtz.transform_f_phi_to_map("2FOFCWT", "PH2FOFCWT", sample_rate=4)
             return grid
         except Exception:
-            logger.warning("Trying FWT PHWT")
+            logger.info("Trying FWT PHWT")
         try:
             grid = mtz.transform_f_phi_to_map("FWT", "PHWT", sample_rate=4)
             return grid
@@ -656,7 +656,7 @@ def read_xmap_from_mtz(
             grid = mtz.transform_f_phi_to_map("FOFCWT", "PHFOFCWT", sample_rate=4)
             return grid
         except Exception:
-            logger.warning("Trying DELFWT DELPHWT")
+            logger.info("Trying DELFWT DELPHWT")
         try:
             grid = mtz.transform_f_phi_to_map("DELFWT", "PHDELWT", sample_rate=4)
             return grid
